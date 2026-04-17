@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Commission Form | KidzStudios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #eef2f5; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+
+        /* --- Navigation Bar --- */
+        .top-nav { max-width: 1400px; width: 100%; display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 1.5rem 1.5rem 0 1.5rem;}
+        .back-btn { background: white; color: #1e3a5f; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .back-btn:hover { background: #f8fafc; transform: translateY(-1px); }
+        .reset-btn { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;}
+        .reset-btn:hover { background: #fecaca; }
+
+        /* --- Form Layout --- */
+        .commission-form { max-width: 1400px; width: 100%; background: white; border-radius: 24px; box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.12); overflow-x: auto; margin-bottom: 2rem;}
+        .form-header { background: #1e3a5f; color: white; padding: 1.4rem 2rem; border-bottom: 4px solid #f5b042; }
+        .brand { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+        .title-wrapper { display: flex; align-items: center; gap: 16px; }
+        .company-logo { height: 54px; width: auto; max-width: 150px; background: #ffffff; padding: 4px; border-radius: 8px; object-fit: contain; }
+        .title-text-group { display: flex; flex-direction: column; justify-content: center; }
+        .title-section h1 { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; line-height: 1; }
+        .company-name { font-size: 0.85rem; font-weight: 600; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge { background: rgba(245, 176, 66, 0.2); padding: 0.4rem 1.2rem; border-radius: 40px; font-size: 0.8rem; font-weight: 500; border: 1px solid #f5b04280; margin-bottom: 6px; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; padding: 1.6rem 2rem; background: #f9fafc; border-bottom: 1px solid #e2edf2; }
+        .field-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .field-group label { font-weight: 600; font-size: 0.75rem; text-transform: uppercase; color: #2c3e66; }
+        .field-group input { padding: 0.7rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 14px; font-size: 0.9rem; font-family: inherit; background: white; color: #0f172a; font-weight: 500; }
+        .field-group input:focus { outline: none; border-color: #1e3a5f; box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.15); }
+
+        .items-section { padding: 1.2rem 2rem 0.5rem 2rem; }
+        .items-section h3 { font-size: 1.2rem; font-weight: 600; color: #0f172a; margin-bottom: 1rem; }
+
+        .commission-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 800px; }
+        .commission-table th { background: #f1f5f9; text-align: left; padding: 12px 8px; font-weight: 700; color: #1e293b; border-bottom: 2px solid #e2e8f0; }
+        .commission-table td { padding: 10px 8px; border-bottom: 1px solid #ecf3f9; vertical-align: middle; }
+        .commission-table input { width: 100%; padding: 8px 8px; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 0.85rem; font-family: inherit; color: #0f172a; font-weight: 500; }
+        .commission-table input:read-only { background-color: #f8fafc; border-color: #e2e8f0; font-weight: 700; }
+        .commission-table input:focus { outline: none; border-color: #1e3a5f; box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.2); }
+        
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .row-number { font-weight: 600; text-align: center; background: #f9f9ff; color: #1e3a5f; }
+        .action-col { text-align: center; width: 60px; }
+        .remove-row-btn { background: none; border: none; color: #b91c1c; font-size: 1.2rem; cursor: pointer; padding: 5px 8px; border-radius: 30px; }
+        .remove-row-btn:hover { background: #fee2e2; }
+
+        .row-actions { display: flex; justify-content: space-between; margin: 0.5rem 2rem 1.2rem 2rem; gap: 1rem; flex-wrap: wrap; }
+        .action-group-right { display: flex; gap: 1rem; }
+        
+        .btn { border: none; padding: 0.6rem 1.4rem; border-radius: 40px; font-weight: 600; font-size: 0.8rem; cursor: pointer; font-family: inherit; transition: 0.2s; border: 1px solid #cbd5e1; }
+        .btn-primary { background: #1e3a5f; color: white; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .btn-primary:hover { background: #0f2a46; transform: translateY(-1px); }
+        .btn-success { background: #10b981; color: white; border: none; }
+        .btn-success:hover { background: #059669; transform: translateY(-1px); }
+        .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+        .totals-section { padding: 1.2rem 2rem 1.8rem 2rem; background: #ffffff; border-top: 1px solid #eef2f6; display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 2rem; }
+        .total-box { background: #f8fafc; border-radius: 24px; padding: 1rem 1.8rem; min-width: 280px; border: 1px solid #e2edf2; }
+        .total-box label { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #2d3a5e; margin-bottom: 0.25rem; display: block; }
+        .total-amount { display: flex; align-items: baseline; gap: 6px; margin-top: 0.3rem; margin-bottom: 0.75rem; }
+        .total-sales-row { display: flex; align-items: baseline; gap: 6px; padding-top: 0.5rem; border-top: 1px dashed #cbd5e1; }
+        .currency-symbol { font-size: 1.9rem; font-weight: 800; color: #1e3a5f; }
+        #totalCommissionDisplay { font-size: 1.9rem; font-weight: 800; border: none; background: transparent; width: 190px; color: #1e3a5f; padding: 0; font-family: monospace; }
+        #totalSalesDisplay { font-size: 1.2rem; font-weight: 700; border: none; background: transparent; width: 160px; color: #2c3e66; padding: 0; font-family: monospace; }
+        .small-note { font-size: 0.7rem; color: #4a5b7a; text-align: center; padding: 0.8rem 2rem 1.2rem; border-top: 1px solid #ecf3f9; }
+
+        /* Column Widths */
+        .commission-table th:nth-child(2), .commission-table td:nth-child(2) { width: 28%; min-width: 220px; }
+        .commission-table th:nth-child(1) { width: 5%; }
+        .commission-table th:nth-child(3) { width: 12%; }
+        .commission-table th:nth-child(4) { width: 10%; }
+        .commission-table th:nth-child(5) { width: 9%; }
+        .commission-table th:nth-child(6) { width: 12%; }
+        .commission-table th:nth-child(7) { width: 12%; }
+        .commission-table th:nth-child(8) { width: 6%; }
+
+        /* --- EXACT A4 PRINT STYLES --- */
+        @media print {
+            @page { size: A4; margin: 1.5cm; }
+            body { background: white; padding: 0; margin: 0; }
+            .top-nav { display: none !important; }
+            .commission-form { box-shadow: none; border-radius: 0; margin: 0; width: 100%; max-width: 100%; overflow-x: visible; }
+            .no-print, .action-col, .remove-row-btn, .row-actions, .btn { display: none !important; }
+            .info-grid, .items-section, .totals-section { padding: 0.5rem 0; }
+            .commission-table th, .commission-table td { border: 1px solid #ccc; }
+            .commission-table input { border: none; background: transparent; padding: 4px 0; box-shadow: none; color: #000; }
+            .field-group input { border: 1px solid #ccc; background: transparent; }
+            .total-box { border: 1px solid #aaa; background: #f9f9f9; }
+            .form-header { background: #1e3a5f; color: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .badge { border: 1px solid #f5b042; background: transparent; color: white; }
+            
+            /* Prevent rows from breaking in half across pages */
+            tr { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav no-print">
+    <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Portal
+    </a>
+    <button class="reset-btn" onclick="clearForm()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        Start New Month
+    </button>
+</div>
+
+<div class="commission-form">
+    <div class="form-header">
+        <div class="brand">
+            <div class="title-section">
+                <div class="title-wrapper">
+                    <img src="https://via.placeholder.com/150x54.png?text=LOGO" alt="Company Logo" class="company-logo">
+                    <div class="title-text-group">
+                        <h1>SALES COMMISSION FORM</h1>
+                        <div class="company-name">Glarion International SDN BHD</div>
+                    </div>
+                </div>
+            </div>
+            <div class="badge">COMMISSION STATEMENT • MALAYSIA (RM)</div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="field-group">
+            <label>📇 SALES REPRESENTATIVE</label>
+            <input type="text" id="repName" placeholder="Full name">
+        </div>
+        <div class="field-group">
+            <label>🆔 REP ID / EMPLOYEE #</label>
+            <input type="text" id="repId" placeholder="KS-XXXX">
+        </div>
+        <div class="field-group">
+            <label>📅 COMMISSION PERIOD</label>
+            <input type="text" id="period" placeholder="Auto-detected month" readonly style="background:#f1f5f9; font-weight:600;">
+        </div>
+        <div class="field-group">
+            <label>🗓️ FORM DATE</label>
+            <input type="date" id="formDate">
+        </div>
+    </div>
+
+    <div class="items-section">
+        <h3>📋 COMMISSIONABLE JOBS / LINE ITEMS (RM)</h3>
+        <table class="commission-table" id="commissionTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Job Description (Print specs / product)</th>
+                    <th>Invoice Number</th>
+                    <th>Sales Amount (RM)</th>
+                    <th>Quantity (Items)</th>
+                    <th>Commission Value (RM / item)</th>
+                    <th>Commission Earned (RM)</th>
+                    <th class="action-col no-print">Action</th>
+                </tr>
+            </thead>
+            <tbody id="commissionRowsBody">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="row-actions no-print">
+        <button type="button" class="btn btn-outline" id="addRowBtn">+ Add New Job / Order</button>
+        <div class="action-group-right">
+            <button type="button" class="btn btn-success" onclick="exportToCSV()">📥 Export Excel (CSV)</button>
+            <button type="button" class="btn btn-primary" id="printPreviewBtn">🖨️ Save / Print as PDF</button>
+        </div>
+    </div>
+
+    <div class="totals-section">
+        <div class="total-box">
+            <label>💰 TOTAL COMMISSION (RM)</label>
+            <div class="total-amount">
+                <span class="currency-symbol">RM</span>
+                <input type="text" id="totalCommissionDisplay" readonly value="0.00">
+            </div>
+            <div class="total-sales-row">
+                <span style="font-size:0.85rem; font-weight:600;">📊 TOTAL SALES (RM):</span>
+                <span class="currency-symbol" style="font-size:1.3rem;">RM</span>
+                <input type="text" id="totalSalesDisplay" readonly value="0.00" style="font-size:1.3rem; font-weight:700;">
+            </div>
+            <small style="color:#475569">* Commission = Quantity × Value per item</small>
+        </div>
+    </div>
+    <div class="small-note no-print">
+        ⚙️ Commission is calculated as flat rate per item (RM per unit) × quantity. Changes are saved automatically.
+    </div>
+</div>
+
+<script>
+    (function() {
+        const tbody = document.getElementById('commissionRowsBody');
+        const addBtn = document.getElementById('addRowBtn');
+        const printBtn = document.getElementById('printPreviewBtn');
+        const totalCommissionDisplay = document.getElementById('totalCommissionDisplay');
+        const totalSalesDisplay = document.getElementById('totalSalesDisplay');
+        const dateInput = document.getElementById('formDate');
+        const periodInput = document.getElementById('period');
+        const repNameInput = document.getElementById('repName');
+        const repIdInput = document.getElementById('repId');
+
+        function formatRM(value) {
+            let num = parseFloat(value);
+            return isNaN(num) ? "0.00" : num.toFixed(2);
+        }
+
+        // --- CORE MATH ---
+        function recalcRowCommission(row) {
+            const quantity = parseInt(row.querySelector('.quantity-items')?.value, 10) || 0;
+            const rate = parseFloat(row.querySelector('.commission-value')?.value) || 0;
+            const earned = quantity * rate;
+            const earnedField = row.querySelector('.commission-earned');
+            if (earnedField) earnedField.value = formatRM(earned);
+            return earned;
+        }
+        
+        function calculateTotals() {
+            let totalSales = 0, totalComm = 0;
+            tbody.querySelectorAll('tr').forEach(row => {
+                totalSales += parseFloat(row.querySelector('.sales-amount')?.value) || 0;
+                totalComm += parseFloat(row.querySelector('.commission-earned')?.value) || 0;
+            });
+            totalSalesDisplay.value = formatRM(totalSales);
+            totalCommissionDisplay.value = formatRM(totalComm);
+            saveData(); // Auto-save on every recalculation
+        }
+        
+        function refreshAllRowsAndTotal() {
+            tbody.querySelectorAll('tr').forEach(recalcRowCommission);
+            renumberRows();
+            calculateTotals();
+        }
+        
+        function renumberRows() {
+            tbody.querySelectorAll('tr').forEach((row, idx) => {
+                const cell = row.querySelector('.row-number-cell');
+                if (cell) cell.textContent = (idx + 1).toString();
+            });
+        }
+        
+        // --- ROW GENERATION ---
+        function createNewRow(description = "", invoice = "", salesAmount = "", quantity = "", commissionValue = "") {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="row-number row-number-cell">0</td>
+                <td><input type="text" class="job-desc data-field" placeholder="e.g., Sublimation Jersey..." value="${description}"></td>
+                <td><input type="text" class="invoice-number data-field" placeholder="INV-xxxx" value="${invoice}"></td>
+                <td><input type="number" class="sales-amount data-field" step="0.01" min="0" placeholder="0.00" value="${salesAmount}"></td>
+                <td><input type="number" class="quantity-items data-field" step="1" min="0" placeholder="0" value="${quantity}"></td>
+                <td><input type="number" class="commission-value data-field" step="0.01" min="0" placeholder="0.00" value="${commissionValue}"></td>
+                <td><input type="text" class="commission-earned" readonly value="0.00"></td>
+                <td class="action-col no-print"><button type="button" class="remove-row-btn">🗑️</button></td>
+            `;
+            return tr;
+        }
+
+        // --- LOCAL STORAGE (AUTO-SAVE) ---
+        function saveData() {
+            const data = {
+                repName: repNameInput.value,
+                repId: repIdInput.value,
+                date: dateInput.value,
+                rows: []
+            };
+            tbody.querySelectorAll('tr').forEach(row => {
+                data.rows.push({
+                    desc: row.querySelector('.job-desc').value,
+                    inv: row.querySelector('.invoice-number').value,
+                    sales: row.querySelector('.sales-amount').value,
+                    qty: row.querySelector('.quantity-items').value,
+                    comm: row.querySelector('.commission-value').value
+                });
+            });
+            localStorage.setItem('kidzStudiosCommissionData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('kidzStudiosCommissionData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if(data.repName) repNameInput.value = data.repName;
+                if(data.repId) repIdInput.value = data.repId;
+                if(data.date) {
+                    dateInput.value = data.date;
+                    dateInput.dispatchEvent(new Event('change'));
+                }
+                
+                if (data.rows && data.rows.length > 0) {
+                    tbody.innerHTML = '';
+                    data.rows.forEach(r => tbody.appendChild(createNewRow(r.desc, r.inv, r.sales, r.qty, r.comm)));
+                } else {
+                    initializeEmptyRows();
+                }
+            } else {
+                setCurrentDateAndMonth();
+                initializeEmptyRows();
+            }
+            refreshAllRowsAndTotal();
+        }
+
+        window.clearForm = function() {
+            if(confirm("Are you sure you want to clear all data and start a new month? This cannot be undone.")) {
+                localStorage.removeItem('kidzStudiosCommissionData');
+                repNameInput.value = "";
+                repIdInput.value = "";
+                setCurrentDateAndMonth();
+                initializeEmptyRows();
+                refreshAllRowsAndTotal();
+            }
+        };
+
+        // --- EXPORT TO EXCEL/CSV ---
+        window.exportToCSV = function() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add Header Info
+            csvContent += `Sales Rep,${repNameInput.value}\n`;
+            csvContent += `Rep ID,${repIdInput.value}\n`;
+            csvContent += `Claim Month,${periodInput.value}\n\n`;
+            
+            // Add Table Headers
+            csvContent += "No,Job Description,Invoice Number,Sales Amount (RM),Quantity,Rate per item (RM),Commission Earned (RM)\n";
+            
+            // Add Row Data
+            tbody.querySelectorAll('tr').forEach((row, i) => {
+                const desc = `"${row.querySelector('.job-desc').value.replace(/"/g, '""')}"`;
+                const inv = `"${row.querySelector('.invoice-number').value.replace(/"/g, '""')}"`;
+                const sales = row.querySelector('.sales-amount').value || 0;
+                const qty = row.querySelector('.quantity-items').value || 0;
+                const rate = row.querySelector('.commission-value').value || 0;
+                const earned = row.querySelector('.commission-earned').value || 0;
+                
+                if(desc !== '""' || inv !== '""' || sales > 0 || qty > 0) {
+                    csvContent += `${i+1},${desc},${inv},${sales},${qty},${rate},${earned}\n`;
+                }
+            });
+            
+            // Add Totals
+            csvContent += `\n,,,TOTAL SALES,${totalSalesDisplay.value},TOTAL COMM,${totalCommissionDisplay.value}\n`;
+
+            // Download Action
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Commission_${repNameInput.value}_${periodInput.value}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+        
+        // --- EVENT BINDING ---
+        function bindEvents() {
+            // Table input events
+            tbody.addEventListener('input', function(e) {
+                if (e.target.classList.contains('data-field')) {
+                    const row = e.target.closest('tr');
+                    if (row) {
+                        recalcRowCommission(row);
+                        calculateTotals();
+                    }
+                }
+            });
+            
+            // Delete Row Event
+            tbody.addEventListener('click', function(e) {
+                const btn = e.target.closest('.remove-row-btn');
+                if (btn) {
+                    const row = btn.closest('tr');
+                    if (row && tbody.children.length > 1) {
+                        row.remove();
+                    } else if (row && tbody.children.length === 1) {
+                        row.querySelectorAll('input:not([readonly])').forEach(inp => inp.value = '');
+                        row.querySelector('.commission-earned').value = '0.00';
+                    }
+                    refreshAllRowsAndTotal();
+                }
+            });
+
+            // Date change -> Month update
+            dateInput.addEventListener('change', function(e) {
+                if (this.value) {
+                    const d = new Date(this.value);
+                    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    periodInput.value = `${months[d.getMonth()]} ${d.getFullYear()}`;
+                    saveData();
+                }
+            });
+
+            // Save rep details on type
+            repNameInput.addEventListener('input', saveData);
+            repIdInput.addEventListener('input', saveData);
+        }
+        
+        function initializeEmptyRows() {
+            tbody.innerHTML = '';
+            tbody.appendChild(createNewRow());
+            tbody.appendChild(createNewRow());
+        }
+
+        function setCurrentDateAndMonth() {
+            dateInput.value = new Date().toISOString().split('T')[0];
+            dateInput.dispatchEvent(new Event('change'));
+        }
+        
+        function init() {
+            bindEvents();
+            loadData(); // Load saved data or initialize empty
+            
+            addBtn.addEventListener('click', () => {
+                tbody.appendChild(createNewRow());
+                renumberRows();
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            });
+            
+            printBtn.addEventListener('click', () => window.print());
+        }
+        
+        init();
+    })();
+</script>
+</body>
+</html>

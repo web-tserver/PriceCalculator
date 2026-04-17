@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidzStudios Internal Portal</title>
+  
+  <meta name="theme-color" content="#F2F2F7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    :root {
+      --bg-body: #F2F2F7;
+      --bg-container: #FFFFFF;
+      --text-primary: #1C1C1E;
+      --text-secondary: #8E8E93;
+      --accent-color: #0A84FF;
+      --border-main: #E5E5EA;
+      --card-hover-shadow: rgba(0, 0, 0, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+      background: var(--bg-body); 
+      color: var(--text-primary); 
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .plain-header {
+      background: var(--bg-container);
+      height: 64px; width: 100%;
+      border-bottom: 1px solid var(--border-main);
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 24px; font-weight: 700; color: var(--text-primary); font-size: 18px; letter-spacing: 0.5px;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .portal-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .portal-header h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .portal-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .tool-card {
+      background: var(--bg-container);
+      border-radius: 32px;
+      padding: 40px 32px;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--border-main);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px var(--card-hover-shadow);
+      border-color: rgba(10, 132, 255, 0.3);
+    }
+
+    .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(10, 132, 255, 0.1);
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .tool-card:hover .icon-wrapper {
+      background: var(--accent-color);
+      color: #FFF;
+    }
+
+    .tool-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .tool-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .plain-footer {
+      background: var(--bg-container); height: 48px; width: 100%; border-top: 1px solid var(--border-main);
+      display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-secondary); margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      .portal-header h1 { font-size: 26px; }
+      .tool-card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="plain-header">
+    <div>KIDZSTUDIOS</div>
+  </header>
+
+  <main class="main-content">
+    
+    <div class="portal-header">
+      <h1>Internal Tools Portal</h1>
+      <p>Select an application below to get started.</p>
+    </div>
+
+    <div class="card-container">
+      
+      <a href="calculator.html" class="tool-card">
+        <div class="icon-wrapper">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="16" y1="14" x2="16" y2="14.01"></line>
+            <line x1="12" y1="14" x2="12" y2="14.01"></line>
+            <line x1="8" y1="14" x2="8" y2="14.01"></line>
+            <line x1="16" y1="10" x2="16" y2="10.01"></line>
+            <line x1="12" y1="10" x2="12" y2="10.01"></line>
+            <line x1="8" y1="10" x2="8" y2="10.01"></line>
+            <line x1="16" y1="18" x2="16" y2="18.01"></line>
+            <line x1="12" y1="18" x2="12" y2="18.01"></line>
+            <line x1="8" y1="18" x2="8" y2="18.01"></line>
+          </svg>
+        </div>
+        <h2>Pricelist Calculator</h2>
+        <p>Generate customer quotes, calculate auto-deposits, and send order details via WhatsApp.</p>
+      </a>
+
+      <a href="commission.html" class="tool-card">
+        <div class="icon-wrapper">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <h2>Commission Claim</h2>
+        <p>Log your weekly or monthly sales jobs and generate your official commission claim slip.</p>
+      </a>
+
+    </div>
+
+  </main>
+
+  <footer class="plain-footer">
+    © 2026 KidzStudios. All Rights Reserved.
+  </footer>
+
+</body>
+</html>
