@@ -65,9 +65,6 @@
 
     .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .brand-subtitle { color: var(--text-secondary); font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
-
-    .reset-btn { background: #fee2e2; color: #b91c1c; border: none; padding: 8px 16px; border-radius: 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
-    .reset-btn:hover { background: #fecaca; }
     
     /* --- Category Grid --- */
     .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; margin-bottom: 32px; }
@@ -123,22 +120,20 @@
     .panel.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- Right Panel Displays (Cart System) --- */
+    /* --- Right Panel UI --- */
     .price-breakdown { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; text-align: center; gap: 8px;}
     .price-breakdown div { flex: 1; }
     .price-breakdown strong { color: var(--text-primary); font-size: 16px; display: block; margin-top: 4px; font-weight: 600; }
     
-    .total-price { text-align: center; font-size: 16px; font-weight: 500; color: var(--text-secondary); padding-top: 16px; border-top: 1px solid var(--border-main); }
-    .total-price span { color: var(--text-primary); font-size: 40px; display: block; margin-top: 8px; font-weight: 700; letter-spacing: -1px; }
+    .total-price { text-align: center; font-size: 16px; font-weight: 500; color: var(--text-secondary); padding-top: 16px; border-top: 1px dashed var(--border-main); }
+    .total-price span { color: var(--text-primary); font-size: 36px; display: block; margin-top: 8px; font-weight: 800; letter-spacing: -1px; }
 
     .deposit-terms { display: flex; justify-content: space-between; align-items: center; background: rgba(10, 132, 255, 0.05); padding: 16px; border-radius: 16px; margin-top: 16px; border: 1px solid rgba(10, 132, 255, 0.2); }
     .deposit-terms div { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-align: left;}
     .deposit-terms span { display: block; font-size: 18px; color: var(--accent-color); font-weight: 700; margin-top: 4px; }
     .deposit-terms .balance span { color: var(--text-primary); }
     
-    .breakdown-toggle { font-size: 13px; color: var(--accent-color); cursor: pointer; font-weight: 600; margin-top: 16px; display: block; text-align: center;}
-    .breakdown-list { display: none; text-align: left; background: var(--bg-card); border: 1px solid var(--border-input); padding: 16px; border-radius: 16px; margin-top: 16px; font-size: 13px; color: var(--text-primary); line-height: 1.6; max-height: 250px; overflow-y: auto;}
-    .breakdown-list.show { display: block; }
+    .breakdown-list { text-align: left; background: var(--bg-body); padding: 16px; border-radius: 16px; margin-top: 16px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; max-height: 200px; overflow-y: auto;}
     .breakdown-list ul { padding-left: 16px; margin: 0;}
 
     /* Cart Items */
@@ -149,6 +144,9 @@
     .btn-remove-cart { background: none; border: none; color: #FF3B30; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1; margin-left: 8px;}
 
     /* Buttons */
+    .reset-btn { background: #fee2e2; color: #b91c1c; border: none; padding: 8px 16px; border-radius: 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
+    .reset-btn:hover { background: #fecaca; }
+
     .wa-btn { background: #34C759; color: #fff; border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 15px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s ease, background 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
     .wa-btn:hover { opacity: 0.9; }
     .wa-btn:active { transform: scale(0.98); }
@@ -482,39 +480,49 @@
       </div> 
       <div class="right-panel">
         
+        <div class="right-box" style="padding-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+             <div style="font-size: 12px; font-weight: 700; color: var(--accent-color); text-transform: uppercase;">1. Current Item Preview</div>
+             <button class="reset-btn" onclick="resetItemForm()" style="padding: 4px 10px; font-size: 11px;">Reset Item</button>
+          </div>
+          
+          <div class="price-breakdown">
+             <div>Base Cost <strong id="out_item_base">RM 0.00</strong></div>
+             <div>Surcharges <strong id="out_item_sur">RM 0.00</strong></div>
+          </div>
+          
+          <div style="margin-top: 12px; padding: 12px; background: rgba(255, 59, 48, 0.05); border: 1px dashed #FF3B30; border-radius: 12px;">
+            <div style="font-size: 11px; font-weight: 700; color: #FF3B30; text-transform: uppercase; margin-bottom: 8px;">🕵️ Internal Commission</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <select id="comm_type" class="select-field calc-trigger" style="flex: 1; margin: 0; border-color: #FF3B30; padding: 6px; font-size: 12px;">
+                <option value="none">None</option><option value="per_item">Per Item</option><option value="flat">Total Flat</option>
+              </select>
+              <input type="number" id="comm_value" class="input-field calc-trigger" min="0" placeholder="0.00" style="width: 80px; margin: 0; border-color: #FF3B30; padding: 6px; font-size: 13px; text-align: right;">
+            </div>
+            <div style="font-size: 11px; color: #FF3B30; margin-top: 6px; text-align: right;">Added to Surcharge: <span id="out_commission_val" style="font-weight:bold;">RM 0.00</span></div>
+          </div>
+
+          <div class="total-price" style="border-top: none; padding-top: 16px;">
+             Item Total <span id="out_item_total" style="font-size: 32px;">0.00</span>
+          </div>
+
+          <div id="breakdown-list" class="breakdown-list" style="display: block; margin-top: 16px; background: var(--bg-body);"></div>
+          
+          <div style="display: flex; gap: 8px; margin-top: 16px;">
+             <button class="action-btn" onclick="generatePriceTiers()" style="flex: 1; padding: 12px; font-size: 12px; background: white;">Tiers</button>
+             <button class="wa-btn" onclick="addToCart()" style="flex: 2; margin-top: 0; padding: 12px; font-size: 14px; box-shadow: none;">🛒 Add to Quote</button>
+          </div>
+        </div>
+
         <div class="right-box" style="padding-top: 24px;">
           
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); text-transform: uppercase;">🛒 Quote Cart</div>
-            <button onclick="clearCart()" style="background: none; border: none; color: #FF3B30; font-size: 12px; font-weight: 600; cursor: pointer;">Clear Cart</button>
+            <div style="font-size: 12px; font-weight: 700; color: var(--accent-color); text-transform: uppercase;">2. Quote Cart</div>
+            <button onclick="clearCart()" style="background: none; border: none; color: #FF3B30; font-size: 11px; font-weight: 600; cursor: pointer;">Clear Cart</button>
           </div>
           
-          <div id="cart-items-container" style="min-height: 40px; margin-bottom: 16px;">
-             <div style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 16px 0; font-style: italic;">Cart is empty. Configure an item and click Add to Quote.</div>
-          </div>
-
-          <div style="background: #f8f9fa; padding: 16px; border-radius: 16px; margin-bottom: 16px; border: 1px dashed var(--accent-color);">
-             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                 <span style="font-size: 12px; font-weight: 600; color: var(--accent-color); text-transform: uppercase;">Current Item Preview</span>
-                 <button onclick="document.getElementById('breakdown-list').classList.toggle('show')" style="background:none; border:none; font-size:11px; color:var(--accent-color); cursor:pointer;">Show Breakdown ▼</button>
-             </div>
-             
-             <div class="price-breakdown" style="margin-bottom: 12px;">
-                <div>Base Cost <strong id="out_item_base">RM 0.00</strong></div>
-                <div>Surcharges <strong id="out_item_sur">RM 0.00</strong></div>
-             </div>
-
-             <div style="text-align: center; font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">
-                <span style="font-size: 16px; color: var(--text-secondary);">RM</span> <span id="out_item_total">0.00</span>
-             </div>
-             
-             <div id="breakdown-list" class="breakdown-list" style="margin-top: 0; margin-bottom: 16px; display: none;"></div>
-
-             <div style="display: flex; gap: 8px;">
-                <button class="reset-btn" onclick="resetForm()" style="flex: 1; padding: 10px; font-size: 12px;">Clear</button>
-                <button class="action-btn" onclick="generatePriceTiers()" style="flex: 1; padding: 10px; font-size: 12px; background: white; margin: 0;">Tiers</button>
-                <button class="wa-btn" onclick="addToCart()" style="flex: 2; margin-top: 0; padding: 10px; font-size: 14px; box-shadow: none;">➕ Add to Quote</button>
-             </div>
+          <div id="cart-items-container" style="min-height: 40px; margin-bottom: 16px; max-height: 250px; overflow-y: auto; padding-right: 4px;">
+             <div style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 16px 0; font-style: italic;">Cart is empty. Add items above.</div>
           </div>
           
           <div style="border-top: 1px solid var(--border-main); padding-top: 16px; margin-top: 16px;">
@@ -539,41 +547,25 @@
               <select id="discount_type" class="select-field calc-global" style="width: 100px; margin: 0; padding: 6px 24px 6px 8px; font-size: 12px;">
                 <option value="none">Discount</option><option value="percent">Percent (%)</option><option value="fixed">Amount (RM)</option>
               </select>
-              <input type="number" id="discount_value" class="input-field calc-global" min="0" value="0" style="flex: 1; margin: 0; padding: 6px; font-size: 13px; text-align: right;" disabled>
-            </div>
-          </div>
-
-          <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed #FF3B30; text-align: left; background: rgba(255, 59, 48, 0.05); padding: 12px; border-radius: 12px;">
-            <div style="font-size: 11px; font-weight: 700; color: #FF3B30; text-transform: uppercase; margin-bottom: 8px;">🕵️ Internal Commission (Staff Only)</div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <select id="comm_type" class="select-field calc-global" style="flex: 1; margin: 0; border-color: #FF3B30; padding: 6px 24px 6px 8px; font-size: 12px;">
-                <option value="none">None</option><option value="per_item">Per Item (RM)</option><option value="flat">Total Flat (RM)</option>
-              </select>
-              <input type="number" id="comm_value" class="input-field calc-global" min="0" value="0" style="width: 80px; margin: 0; border-color: #FF3B30; padding: 6px; font-size: 13px; text-align: right;" disabled>
-            </div>
-            <div style="margin-top: 8px; font-size: 13px; font-weight: 600; color: #FF3B30; text-align: right;">
-              Hidden Comm Added: <span id="out_commission_val">RM 0.00</span>
+              <input type="number" id="discount_value" class="input-field calc-global" min="0" placeholder="0.00" style="flex: 1; margin: 0; padding: 6px; font-size: 13px; text-align: right;" disabled>
             </div>
           </div>
 
           <div style="border-top: 1px solid var(--border-main); padding-top: 16px; margin-top: 16px;">
             <div class="price-breakdown" style="margin-bottom: 6px;">
-                <div style="text-align: left;">Cart Subtotal</div><strong id="out_cart_subtotal" style="margin: 0;">RM 0.00</strong>
-            </div>
-            <div class="price-breakdown" style="margin-bottom: 6px;">
-                <div style="text-align: left;">Global Add-ons</div><strong id="out_cart_addons" style="margin: 0;">RM 0.00</strong>
+                <div style="text-align: left;">Cart Subtotal</div><strong id="out_cart_subtotal" style="margin: 0; font-size: 14px;">RM 0.00</strong>
             </div>
             <div id="row_out_discount" class="price-breakdown" style="display: none; margin-bottom: 6px; color: #FF3B30;">
-                <div style="text-align: left;">Discount</div><strong id="out_cart_discount" style="margin: 0; color: #FF3B30;">-RM 0.00</strong>
+                <div style="text-align: left;">Discount</div><strong id="out_cart_discount" style="margin: 0; font-size: 14px; color: #FF3B30;">-RM 0.00</strong>
             </div>
             
             <div class="total-price" style="border-top: 1px dashed var(--border-main); margin-top: 16px; padding-top: 16px;">
-                Grand Total <span id="out_cart_grand">RM 0.00</span>
+                Grand Total <span id="out_cart_grand" style="font-size: 32px;">RM 0.00</span>
             </div>
             
-            <div class="deposit-terms">
+            <div class="deposit-terms" style="margin-top: 16px;">
                 <div>70% Deposit Needed <span id="out_cart_deposit">RM 0.00</span></div>
-                <div class="balance">Balance Due <span id="out_balance">RM 0.00</span></div>
+                <div class="balance">Balance Due <span id="out_cart_balance">RM 0.00</span></div>
             </div>
           </div>
 
@@ -679,8 +671,9 @@
 
       <div style="display: flex; justify-content: flex-end;">
           <table style="width: 350px; font-size: 14px; line-height: 2;">
-              <tr><td style="font-weight: bold;">Item Subtotal:</td><td style="text-align: right;" id="pdf-subtotal">RM 0.00</td></tr>
-              <tr><td style="font-weight: bold;">Surcharges & Setup Fees:</td><td style="text-align: right;" id="pdf-sur">RM 0.00</td></tr>
+              <tr><td style="font-weight: bold;">Items Subtotal:</td><td style="text-align: right;" id="pdf-subtotal">RM 0.00</td></tr>
+              <tr id="pdf-row-design" style="display:none;"><td style="font-weight: bold;">Custom Design Fee:</td><td style="text-align: right;" id="pdf-design">RM 0.00</td></tr>
+              <tr id="pdf-row-shipping" style="display:none;"><td style="font-weight: bold;">Shipping / Postage:</td><td style="text-align: right;" id="pdf-shipping">RM 0.00</td></tr>
               <tr id="pdf-row-discount" style="display:none; color: #FF3B30;"><td style="font-weight: bold;">Discount:</td><td style="text-align: right;" id="pdf-discount">-RM 0.00</td></tr>
               
               <tr style="border-top: 2px solid #1e3a5f;">
@@ -719,6 +712,7 @@
     // --- Global State ---
     let currentCategory = 'sublimation';
     let cart = [];
+    window.quoteData = null; // Stores calculation data for exporting
     
     const categoryNames = {
       'sublimation': 'Full Print Sublimation Jersey',
@@ -786,17 +780,13 @@
       if(val < min) val = min;
       el.value = val;
       
-      // Dispatch an event to ensure listeners trigger calculation properly
-      el.dispatchEvent(new Event('input', { bubbles: true }));
+      calculateCurrentItem();
     }
 
-    // --- RESET CURRENT ITEM ---
-    function resetForm() {
+    function resetItemForm() {
       document.querySelectorAll('.calc-trigger').forEach(el => {
           if (el.tagName === 'SELECT') { el.selectedIndex = 0; } 
-          else if (el.type === 'checkbox') { el.checked = false; }
           else if (el.type === 'number') { el.value = el.min || ''; }
-          else { el.value = ''; }
       });
       calculateCurrentItem();
       showToast("Item configuration cleared.");
@@ -816,30 +806,7 @@
       });
     });
 
-    // Toggle global inputs
-    document.getElementById('custom_design_enabled').addEventListener('change', function() {
-      document.getElementById('custom_design_amount').disabled = !this.checked;
-      renderCart();
-    });
-
-    document.getElementById('discount_type').addEventListener('change', function() {
-      document.getElementById('discount_value').disabled = (this.value === 'none');
-      renderCart();
-    });
-
-    document.getElementById('comm_type').addEventListener('change', function() {
-      document.getElementById('comm_value').disabled = (this.value === 'none');
-      renderCart();
-    });
-
-    // Auto-enable dropdowns when typing numbers
-    document.getElementById('comm_value').addEventListener('input', function() {
-        if (this.value > 0 && document.getElementById('comm_type').value === 'none') {
-            document.getElementById('comm_type').value = 'flat';
-        }
-        renderCart();
-    });
-    
+    // Auto-enable dropdowns when typing numbers in Global inputs
     document.getElementById('discount_value').addEventListener('input', function() {
         if (this.value > 0 && document.getElementById('discount_type').value === 'none') {
             document.getElementById('discount_type').value = 'fixed';
@@ -919,7 +886,7 @@
       });
 
       let sCost = perPieceAddonsTotal + sizeSur;
-      return { base: bCost, sur: sCost, total: bCost + sCost, breakdown: bDown, qty: qty };
+      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
     }
 
     function calcSilkscreen() {
@@ -930,11 +897,7 @@
       });
       document.getElementById('silk_totalQty').innerText = qty;
 
-      if(qty > 0 && qty < 10) { 
-        if(!window.simulatingPricing) showToast("Silkscreen normally requires 10+ pcs."); 
-      }
-      
-      if(qty === 0) return {base:0, sur:0, total:0, breakdown: [], qty: 0};
+      if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
 
       let sBase = parseFloat(document.getElementById('silk_shirtType').value);
       let bCost = qty * sBase;
@@ -953,7 +916,7 @@
       if(sizeSur>0) bDown.push(`📏 Size Surcharge: RM${sizeSur}`);
 
       let sCost = pCost + lsCost + sizeSur;
-      return { base: bCost, sur: sCost, total: bCost + sCost, breakdown: bDown, qty: qty };
+      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
     }
 
     function calcDTF() {
@@ -963,7 +926,7 @@
         qty += q; sizeSur += (q * s.sur); 
       });
       document.getElementById('dtf_totalQty').innerText = qty;
-      if(qty === 0) return {base:0, sur:0, total:0, breakdown: [], qty: 0};
+      if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
 
       let sBase = parseFloat(document.getElementById('dtf_shirtType').value);
       let bCost = qty * sBase;
@@ -986,7 +949,7 @@
       if(sizeSur>0) bDown.push(`📏 Size Surcharge: RM${sizeSur}`);
 
       let sCost = pSizeCost + slvCost + lsCost + sizeSur;
-      return { base: bCost, sur: sCost, total: bCost + sCost, breakdown: bDown, qty: qty };
+      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
     }
 
     function calcSimple(type) {
@@ -995,10 +958,7 @@
       let qty = el ? parseInt(el.value) || 0 : 0;
       let bDown = [];
 
-      if((type === 'lanyard' || type === 'cap') && qty > 0 && qty < 10) {
-        if(!window.simulatingPricing) showToast(`Normally requires 10 pcs minimum.`);
-      }
-      if(qty === 0) return {base:0, sur:0, total:0, breakdown: [], qty: 0};
+      if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
 
       let unit = 0;
       if (type === 'lanyard') {
@@ -1027,7 +987,7 @@
       }
 
       if(unit > 0) { bDown.push(`📦 Base Price: ${qty} pcs x RM${unit}`); }
-      return { base: qty * unit, sur: 0, total: qty * unit, breakdown: bDown, qty: qty };
+      return { base: qty * unit, sur: 0, breakdown: bDown, qty: qty };
     }
 
     // Calculates and displays the ACTIVE item currently being configured
@@ -1038,35 +998,55 @@
       else if(currentCategory === 'dtf_shirt') res = calcDTF();
       else res = calcSimple(currentCategory);
 
+      // We calculate the commission PER ITEM so it ties to this exact quote
+      let commType = document.getElementById('comm_type').value;
+      let commVal = parseFloat(document.getElementById('comm_value').value) || 0;
+      let commAmt = 0;
+      if (res.qty > 0 && commVal > 0) {
+          if (commType === 'per_item') commAmt = res.qty * commVal;
+          else if (commType === 'flat') commAmt = commVal;
+      }
+
+      // We fold the commission into the item's surcharge secretly
+      let displayedSurcharge = res.sur + commAmt;
+      let itemTotal = res.base + displayedSurcharge;
+
       if(!window.simulatingPricing) {
         document.getElementById('out_item_base').innerText = `RM ${res.base.toFixed(2)}`;
-        document.getElementById('out_item_sur').innerText = `RM ${res.sur.toFixed(2)}`;
-        document.getElementById('out_item_total').innerText = res.total.toFixed(2);
+        document.getElementById('out_item_sur').innerText = `RM ${displayedSurcharge.toFixed(2)}`;
+        document.getElementById('out_item_total').innerText = itemTotal.toFixed(2);
+        
+        // Staff-only view
+        document.getElementById('out_commission_val').innerText = `RM ${commAmt.toFixed(2)}`;
         
         let bdHtml = res.breakdown.length > 0 ? "<ul><li>" + res.breakdown.join("</li><li>") + "</li></ul>" : "<i style='color:var(--text-secondary);'>No configurations added yet.</i>";
         document.getElementById('breakdown-list').innerHTML = bdHtml;
       }
-      return res;
+
+      // Return a fully packaged item
+      return {
+          catId: currentCategory,
+          name: categoryNames[currentCategory],
+          base: res.base,
+          sur: displayedSurcharge, // This now secretly includes the commission!
+          total: itemTotal,
+          breakdown: res.breakdown,
+          qty: res.qty
+      };
     }
 
     // --- CART LOGIC ---
     function addToCart() {
-        let res = calculateCurrentItem();
-        if(res.qty === 0) { showToast("Item quantity cannot be 0."); return; }
+        let item = calculateCurrentItem();
+        if(item.qty === 0) { showToast("Item quantity cannot be 0."); return; }
 
         cart.push({
             id: Date.now(),
-            catId: currentCategory,
-            name: categoryNames[currentCategory],
-            base: res.base,
-            sur: res.sur,
-            total: res.total,
-            breakdown: res.breakdown,
-            qty: res.qty
+            ...item
         });
 
         renderCart();
-        resetForm(); // Auto-clear form for the next item
+        resetItemForm(); // Clear the left panel
         showToast("Added to Quote Cart!");
     }
 
@@ -1085,13 +1065,11 @@
     function renderCart() {
         let container = document.getElementById('cart-items-container');
         let html = '';
-        let totalQty = 0;
-
+        
         if (cart.length === 0) {
             html = `<div style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 16px 0; font-style: italic;">Cart is empty. Configure an item and click Add to Quote.</div>`;
         } else {
             cart.forEach((item, i) => {
-                totalQty += item.qty;
                 let breakdownHtml = item.breakdown.map(b => `<li style="margin-bottom:2px;">${b}</li>`).join('');
                 
                 html += `
@@ -1111,70 +1089,56 @@
         }
         
         container.innerHTML = html;
-        calculateQuoteGlobals(totalQty);
+        calculateQuoteGlobals();
     }
 
-    function calculateQuoteGlobals(totalQty) {
-        let cartBase = 0;
-        let itemSurcharges = 0;
+    function calculateQuoteGlobals() {
+        let cartSubtotal = 0;
         
         cart.forEach(item => {
-            cartBase += item.base;
-            itemSurcharges += item.sur;
+            cartSubtotal += item.total; // already includes base, true surcharges, and hidden commission
         });
 
-        // Add Global Custom Design Fee
+        // Add Global Addons
         let designFee = 0;
         if(document.getElementById('custom_design_enabled').checked) {
             designFee = parseFloat(document.getElementById('custom_design_amount').value) || 0;
         }
 
-        // Add Shipping
         let shippingFee = parseFloat(document.getElementById('shipping_fee').value) || 0;
 
-        // Add Internal Commission
-        let commType = document.getElementById('comm_type').value;
-        let commVal = parseFloat(document.getElementById('comm_value').value) || 0;
-        let commAmt = 0;
-        if (totalQty > 0 && commVal > 0) {
-            if (commType === 'per_item') commAmt = totalQty * commVal;
-            else if (commType === 'flat') commAmt = commVal;
-        }
-        
-        // SECRECY: Combine Global Fees + Item Surcharges + Commission into one UI Surcharge line
-        let globalAddons = designFee + shippingFee;
-        let displayedCartSur = itemSurcharges + globalAddons + commAmt;
-        
-        let grandTotal = cartBase + displayedCartSur;
+        let grossTotal = cartSubtotal + designFee + shippingFee;
 
         // Apply Discount
         let dType = document.getElementById('discount_type').value;
         let dVal = parseFloat(document.getElementById('discount_value').value) || 0;
         let discountAmt = 0;
         
-        if (grandTotal > 0 && dVal > 0) {
-            if (dType === 'percent') discountAmt = grandTotal * (dVal / 100);
-            else if (dType === 'fixed') discountAmt = dVal > grandTotal ? grandTotal : dVal;
-            grandTotal -= discountAmt;
+        if (grossTotal > 0 && dVal > 0) {
+            if (dType === 'percent') discountAmt = grossTotal * (dVal / 100);
+            else if (dType === 'fixed') discountAmt = dVal > grossTotal ? grossTotal : dVal;
         }
 
+        let grandTotal = grossTotal - discountAmt;
         let depositAmt = grandTotal * 0.70;
+        let balanceAmt = grandTotal - depositAmt;
 
-        // Update UI (Bottom Box)
-        document.getElementById('out_cart_subtotal').innerText = `RM ${cartBase.toFixed(2)}`;
-        document.getElementById('out_cart_addons').innerText = `RM ${displayedCartSur.toFixed(2)}`;
-        document.getElementById('out_cart_discount').innerText = `-RM ${discountAmt.toFixed(2)}`;
+        // Update Cart UI
+        document.getElementById('out_cart_subtotal').innerText = `RM ${cartSubtotal.toFixed(2)}`;
         
-        if(discountAmt > 0) { document.getElementById('row_out_discount').style.display = 'flex'; } 
-        else { document.getElementById('row_out_discount').style.display = 'none'; }
+        if(discountAmt > 0) { 
+            document.getElementById('row_out_discount').style.display = 'flex'; 
+            document.getElementById('out_cart_discount').innerText = `-RM ${discountAmt.toFixed(2)}`;
+        } else { 
+            document.getElementById('row_out_discount').style.display = 'none'; 
+        }
         
         document.getElementById('out_cart_grand').innerText = `RM ${grandTotal.toFixed(2)}`;
-        
-        // Staff Red Box
-        document.getElementById('out_commission_val').innerText = `RM ${commAmt.toFixed(2)}`;
+        document.getElementById('out_cart_deposit').innerText = `RM ${depositAmt.toFixed(2)}`;
+        document.getElementById('out_cart_balance').innerText = `RM ${balanceAmt.toFixed(2)}`;
 
         // Save state for Document Generation
-        window.quoteData = { cartBase, itemSurcharges, discountAmt, shippingFee, designFee, commAmt, displayedCartSur, grandTotal, depositAmt };
+        window.quoteData = { cart: [...cart], cartSubtotal, discountAmt, shippingFee, designFee, grandTotal, depositAmt, balanceAmt };
     }
 
     // --- TIERS GENERATOR (Simulates Current Item) ---
@@ -1272,12 +1236,14 @@
         document.getElementById('pdf-ref').innerText = refStr;
         document.getElementById('pdf-date').innerText = dateStr;
         document.getElementById('pdf-valid').innerText = validStr;
+
         document.getElementById('pdf-client-name').innerText = document.getElementById('client_name').value || 'Valued Customer';
         document.getElementById('pdf-client-company').innerText = document.getElementById('client_company').value || '';
 
+        // Safely Build Cart HTML
         let tbody = document.getElementById('pdf-tbody');
         let html = '';
-        cart.forEach((item, i) => {
+        q.cart.forEach((item, i) => {
             let detailString = item.breakdown.map(b => b.replace(/<\/?[^>]+(>|$)/g, "").replace('📦 ', '').replace('👕 ', '')).join('<br>');
             html += `
             <tr style="border-bottom: 1px solid #eee;">
@@ -1292,14 +1258,7 @@
         });
         tbody.innerHTML = html;
 
-        // Subtotal = Pure Base + Item Surcharges
-        let pureItemTotal = q.cartBase + q.itemSurcharges;
-        document.getElementById('pdf-subtotal').innerText = `RM ${pureItemTotal.toFixed(2)}`;
-        
-        // Hide commission inside Document Setup Fees line
-        let docSurcharge = q.commAmt; 
-        if(docSurcharge > 0) { document.getElementById('pdf-row-sur').style.display = 'table-row'; document.getElementById('pdf-sur').innerText = `RM ${docSurcharge.toFixed(2)}`;
-        } else { document.getElementById('pdf-row-sur').style.display = 'none'; }
+        document.getElementById('pdf-subtotal').innerText = `RM ${q.cartSubtotal.toFixed(2)}`;
         
         if(q.designFee > 0) { document.getElementById('pdf-row-design').style.display = 'table-row'; document.getElementById('pdf-design').innerText = `RM ${q.designFee.toFixed(2)}`;
         } else { document.getElementById('pdf-row-design').style.display = 'none'; }
@@ -1312,7 +1271,7 @@
 
         document.getElementById('pdf-grand').innerText = `RM ${q.grandTotal.toFixed(2)}`;
         document.getElementById('pdf-deposit').innerText = `RM ${q.depositAmt.toFixed(2)}`;
-        document.getElementById('pdf-balance').innerText = `RM ${(q.grandTotal - q.depositAmt).toFixed(2)}`;
+        document.getElementById('pdf-balance').innerText = `RM ${q.balanceAmt.toFixed(2)}`;
         
         return refStr;
     }
@@ -1401,24 +1360,21 @@
       msg += `*To:* ${client} ${company ? `(${company})` : ''}\n\n`;
       
       msg += `*ORDER ITEMS:*\n`;
-      cart.forEach((item, i) => {
+      q.cart.forEach((item, i) => {
           msg += `*${i+1}. ${item.name} (Qty: ${item.qty})*\n`;
           item.breakdown.forEach(b => { msg += ` - ${b.replace(/<\/?[^>]+(>|$)/g, "")}\n`; });
           msg += ` _Item Total: RM ${item.total.toFixed(2)}_\n\n`;
       });
       
       msg += `*SUMMARY:*\n`;
-      let pureItemTotal = q.cartBase + q.itemSurcharges;
-      msg += `Item Subtotal: RM ${pureItemTotal.toFixed(2)}\n`;
-      
-      if(q.commAmt > 0) msg += `Setup Fees: RM ${q.commAmt.toFixed(2)}\n`;
+      msg += `Items Subtotal: RM ${q.cartSubtotal.toFixed(2)}\n`;
       if(q.designFee > 0) msg += `Design Fee: RM ${q.designFee.toFixed(2)}\n`;
       if(q.shippingFee > 0) msg += `Shipping: RM ${q.shippingFee.toFixed(2)}\n`;
       if(q.discountAmt > 0) msg += `Discount: -RM ${q.discountAmt.toFixed(2)}\n`;
       
       msg += `\n*GRAND TOTAL: RM ${q.grandTotal.toFixed(2)}*\n`;
       msg += `_70% Deposit Required: RM ${q.depositAmt.toFixed(2)}_\n`;
-      msg += `_Balance on Completion: RM ${(q.grandTotal - q.depositAmt).toFixed(2)}_\n\n`;
+      msg += `_Balance on Completion: RM ${q.balanceAmt.toFixed(2)}_\n\n`;
       msg += `Thank you! Please let us know if you have any questions.`;
       
       window.open(`https://api.whatsapp.com/send?phone=${countryCode}${cleanNumber}&text=${encodeURIComponent(msg)}`, '_blank');
