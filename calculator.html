@@ -65,6 +65,9 @@
 
     .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .brand-subtitle { color: var(--text-secondary); font-size: 16px; font-weight: 600; letter-spacing: 0.5px; }
+
+    .reset-btn { background: #fee2e2; color: #b91c1c; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .reset-btn:hover { background: #fecaca; }
     
     /* --- Category Grid --- */
     .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; margin-bottom: 32px; }
@@ -120,20 +123,20 @@
     .panel.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- Right Panel UI --- */
+    /* --- Right Panel Displays --- */
     .price-breakdown { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; text-align: center; gap: 8px;}
     .price-breakdown div { flex: 1; }
     .price-breakdown strong { color: var(--text-primary); font-size: 16px; display: block; margin-top: 4px; font-weight: 600; }
     
-    .total-price { text-align: center; font-size: 16px; font-weight: 500; color: var(--text-secondary); padding-top: 16px; border-top: 1px dashed var(--border-main); }
-    .total-price span { color: var(--text-primary); font-size: 36px; display: block; margin-top: 8px; font-weight: 800; letter-spacing: -1px; }
+    .total-price { text-align: center; font-size: 16px; font-weight: 500; color: var(--text-secondary); padding-top: 16px; border-top: 1px solid var(--border-main); }
+    .total-price span { color: var(--text-primary); font-size: 40px; display: block; margin-top: 8px; font-weight: 700; letter-spacing: -1px; }
 
     .deposit-terms { display: flex; justify-content: space-between; align-items: center; background: rgba(10, 132, 255, 0.05); padding: 16px; border-radius: 16px; margin-top: 16px; border: 1px solid rgba(10, 132, 255, 0.2); }
     .deposit-terms div { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-align: left;}
     .deposit-terms span { display: block; font-size: 18px; color: var(--accent-color); font-weight: 700; margin-top: 4px; }
     .deposit-terms .balance span { color: var(--text-primary); }
     
-    .breakdown-list { text-align: left; background: var(--bg-body); padding: 16px; border-radius: 16px; margin-top: 16px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; max-height: 200px; overflow-y: auto;}
+    .breakdown-list { text-align: left; background: var(--bg-body); padding: 16px; border-radius: 16px; margin-top: 16px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; max-height: 250px; overflow-y: auto;}
     .breakdown-list ul { padding-left: 16px; margin: 0;}
 
     /* Cart Items */
@@ -144,9 +147,6 @@
     .btn-remove-cart { background: none; border: none; color: #FF3B30; font-size: 16px; cursor: pointer; padding: 4px; line-height: 1; margin-left: 8px;}
 
     /* Buttons */
-    .reset-btn { background: #fee2e2; color: #b91c1c; border: none; padding: 8px 16px; border-radius: 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
-    .reset-btn:hover { background: #fecaca; }
-
     .wa-btn { background: #34C759; color: #fff; border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 15px; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s ease, background 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);}
     .wa-btn:hover { opacity: 0.9; }
     .wa-btn:active { transform: scale(0.98); }
@@ -780,7 +780,8 @@
       if(val < min) val = min;
       el.value = val;
       
-      calculateCurrentItem();
+      // Dispatch an event to ensure listeners trigger calculation properly
+      el.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     function resetItemForm() {
@@ -886,7 +887,7 @@
       });
 
       let sCost = perPieceAddonsTotal + sizeSur;
-      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
+      return { base: bCost, sur: sCost, total: bCost + sCost, breakdown: bDown, qty: qty };
     }
 
     function calcSilkscreen() {
@@ -897,6 +898,10 @@
       });
       document.getElementById('silk_totalQty').innerText = qty;
 
+      if(qty > 0 && qty < 10) { 
+        if(!window.simulatingPricing) showToast("Silkscreen requires a minimum of 10 pieces!"); 
+        return {base:0, sur:0, breakdown: ["⚠️ Minimum 10 pieces required."], qty: qty}; 
+      }
       if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
 
       let sBase = parseFloat(document.getElementById('silk_shirtType').value);
@@ -907,8 +912,8 @@
       let bColors = parseInt(document.getElementById('silk_back_colors').value);
       let pCost = 0; let tier = getSSTier(qty);
 
-      if (fColors >= 0) { let fc = ssMatrix[tier][fColors]; pCost += (qty*fc); bDown.push(`🎨 Front Print (${fColors+1}C): ${qty} pcs x RM${fc}`); }
-      if (bColors >= 0) { let bc = ssMatrix[tier][bColors]; pCost += (qty*bc); bDown.push(`🎨 Back Print (${bColors+1}C): ${qty} pcs x RM${bc}`); }
+      if (qty>0 && fColors >= 0) { let fc = ssMatrix[tier][fColors]; pCost += (qty*fc); bDown.push(`🎨 Front Print (${fColors+1}C): ${qty} pcs x RM${fc}`); }
+      if (qty>0 && bColors >= 0) { let bc = ssMatrix[tier][bColors]; pCost += (qty*bc); bDown.push(`🎨 Back Print (${bColors+1}C): ${qty} pcs x RM${bc}`); }
 
       let lsQty = parseInt(document.getElementById('silk_ls_qty').value) || 0;
       let lsCost = lsQty * 5;
@@ -958,6 +963,10 @@
       let qty = el ? parseInt(el.value) || 0 : 0;
       let bDown = [];
 
+      if((type === 'lanyard' || type === 'cap') && qty > 0 && qty < 10) {
+        if(!window.simulatingPricing) showToast(`Minimum 10 pieces required for ${type}.`);
+        return {base:0, sur:0, breakdown: ["⚠️ Minimum 10 pieces required."], qty: qty};
+      }
       if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
 
       let unit = 0;
@@ -1065,11 +1074,13 @@
     function renderCart() {
         let container = document.getElementById('cart-items-container');
         let html = '';
-        
+        let totalQty = 0;
+
         if (cart.length === 0) {
             html = `<div style="font-size: 13px; color: var(--text-secondary); text-align: center; padding: 16px 0; font-style: italic;">Cart is empty. Configure an item and click Add to Quote.</div>`;
         } else {
             cart.forEach((item, i) => {
+                totalQty += item.qty;
                 let breakdownHtml = item.breakdown.map(b => `<li style="margin-bottom:2px;">${b}</li>`).join('');
                 
                 html += `
@@ -1089,14 +1100,16 @@
         }
         
         container.innerHTML = html;
-        calculateQuoteGlobals();
+        calculateQuoteGlobals(totalQty);
     }
 
-    function calculateQuoteGlobals() {
-        let cartSubtotal = 0;
+    function calculateQuoteGlobals(totalQty) {
+        let cartBase = 0;
+        let itemSurcharges = 0;
         
         cart.forEach(item => {
-            cartSubtotal += item.total; // already includes base, true surcharges, and hidden commission
+            cartBase += item.base;
+            itemSurcharges += item.sur;
         });
 
         // Add Global Addons
@@ -1107,7 +1120,7 @@
 
         let shippingFee = parseFloat(document.getElementById('shipping_fee').value) || 0;
 
-        let grossTotal = cartSubtotal + designFee + shippingFee;
+        let grossTotal = cartBase + itemSurcharges + designFee + shippingFee;
 
         // Apply Discount
         let dType = document.getElementById('discount_type').value;
@@ -1124,7 +1137,7 @@
         let balanceAmt = grandTotal - depositAmt;
 
         // Update Cart UI
-        document.getElementById('out_cart_subtotal').innerText = `RM ${cartSubtotal.toFixed(2)}`;
+        document.getElementById('out_cart_subtotal').innerText = `RM ${(cartBase + itemSurcharges).toFixed(2)}`;
         
         if(discountAmt > 0) { 
             document.getElementById('row_out_discount').style.display = 'flex'; 
@@ -1138,7 +1151,7 @@
         document.getElementById('out_cart_balance').innerText = `RM ${balanceAmt.toFixed(2)}`;
 
         // Save state for Document Generation
-        window.quoteData = { cart: [...cart], cartSubtotal, discountAmt, shippingFee, designFee, grandTotal, depositAmt, balanceAmt };
+        window.quoteData = { cart: [...cart], cartSubtotal: (cartBase + itemSurcharges), discountAmt, shippingFee, designFee, grandTotal, depositAmt, balanceAmt };
     }
 
     // --- TIERS GENERATOR (Simulates Current Item) ---
@@ -1368,6 +1381,7 @@
       
       msg += `*SUMMARY:*\n`;
       msg += `Items Subtotal: RM ${q.cartSubtotal.toFixed(2)}\n`;
+      
       if(q.designFee > 0) msg += `Design Fee: RM ${q.designFee.toFixed(2)}\n`;
       if(q.shippingFee > 0) msg += `Shipping: RM ${q.shippingFee.toFixed(2)}\n`;
       if(q.discountAmt > 0) msg += `Discount: -RM ${q.discountAmt.toFixed(2)}\n`;
