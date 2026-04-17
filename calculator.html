@@ -599,4 +599,669 @@
       </table>
 
       <div style="display: flex; gap: 12px; flex-direction: column;">
-          <button class="wa-btn
+          <button class="wa-btn" onclick="copyTiersToClipboard()" style="margin: 0; background: var(--accent-color);">📋 Copy Table to Clipboard</button>
+          <button class="reset-btn" onclick="document.getElementById('tier-modal').classList.remove('show')" style="margin: 0; padding: 14px; width: 100%; text-align: center;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="print-quote-document" style="position: absolute; left: -9999px; top: 0; width: 210mm; min-height: 297mm; padding: 20mm; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; z-index: -1000;">
+      
+      <div style="display: flex; justify-content: space-between; border-bottom: 3px solid #1e3a5f; padding-bottom: 20px; margin-bottom: 30px;">
+          <img src="https://via.placeholder.com/200x70.png?text=KidzStudios+Logo" style="height: 60px;">
+          <div style="text-align: right;">
+              <h1 style="color: #1e3a5f; margin: 0; font-size: 32px; text-transform: uppercase; letter-spacing: 1px;">Quotation</h1>
+              <div style="font-size: 14px; color: #666; margin-top: 8px; font-weight: bold;">Ref: <span id="pdf-ref">KS-Q-0000</span></div>
+              <div style="font-size: 14px; color: #666; margin-top: 4px;">Date: <span id="pdf-date">DD MM YYYY</span></div>
+              <div style="font-size: 14px; color: #666; margin-top: 4px;">Valid Until: <span id="pdf-valid">DD MM YYYY</span></div>
+          </div>
+      </div>
+
+      <div style="margin-bottom: 30px; font-size: 14px; line-height: 1.6;">
+          <strong style="font-size: 16px; color: #1e3a5f;">Quotation For:</strong><br>
+          <span id="pdf-client-name" style="font-weight: bold; font-size: 16px;">Client Name</span><br>
+          <span id="pdf-client-company">Company Name</span>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+          <thead>
+              <tr style="background: #1e3a5f; color: white;">
+                  <th style="padding: 12px 10px; text-align: center; border: 1px solid #1e3a5f; width: 5%;">#</th>
+                  <th style="padding: 12px 10px; text-align: left; border: 1px solid #1e3a5f; width: 60%;">Item Description</th>
+                  <th style="padding: 12px 10px; text-align: center; border: 1px solid #1e3a5f; width: 15%;">Qty</th>
+                  <th style="padding: 12px 10px; text-align: right; border: 1px solid #1e3a5f; width: 20%;">Amount (RM)</th>
+              </tr>
+          </thead>
+          <tbody id="pdf-tbody">
+             </tbody>
+      </table>
+
+      <div style="display: flex; justify-content: flex-end;">
+          <table style="width: 350px; font-size: 14px; line-height: 2;">
+              <tr><td style="font-weight: bold;">Item Subtotal:</td><td style="text-align: right;" id="pdf-subtotal">RM 0.00</td></tr>
+              <tr id="pdf-row-design" style="display:none;"><td style="font-weight: bold;">Custom Design Fee:</td><td style="text-align: right;" id="pdf-design">RM 0.00</td></tr>
+              <tr id="pdf-row-shipping" style="display:none;"><td style="font-weight: bold;">Shipping / Postage:</td><td style="text-align: right;" id="pdf-shipping">RM 0.00</td></tr>
+              <tr id="pdf-row-discount" style="display:none; color: #FF3B30;"><td style="font-weight: bold;">Discount:</td><td style="text-align: right;" id="pdf-discount">-RM 0.00</td></tr>
+              
+              <tr style="border-top: 2px solid #1e3a5f;">
+                  <td style="font-weight: 900; font-size: 18px; padding-top: 10px; color: #1e3a5f;">Grand Total:</td>
+                  <td style="text-align: right; font-weight: 900; font-size: 18px; padding-top: 10px; color: #1e3a5f;" id="pdf-grand">RM 0.00</td>
+              </tr>
+          </table>
+      </div>
+
+      <div style="margin-top: 60px; font-size: 12px; color: #444; border-top: 1px solid #eee; padding-top: 20px;">
+          <strong style="font-size: 14px; color: #1e3a5f;">Terms & Conditions / Payment Info</strong><br><br>
+          <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #1e3a5f; margin-bottom: 20px;">
+              <strong style="color: #000; font-size: 14px;">70% Deposit Required to Commence Production: <span id="pdf-deposit">RM 0.00</span></strong><br>
+              <span style="color: #000;">Balance Due prior to delivery: <strong id="pdf-balance">RM 0.00</strong></span>
+          </div>
+          <p style="line-height: 1.6;">
+              1. Please make all payments payable to <strong>KidzStudios (Maybank Acc: 1234567890)</strong>.<br>
+              2. Production lead time begins only upon receipt of the deposit and approval of final artwork.<br>
+              3. Goods sold are not returnable or refundable unless defective upon receipt.<br>
+              4. This quotation is computer generated and valid for 14 days. No signature is required.
+          </p>
+      </div>
+  </div>
+
+<script>
+    // --- Toast Notifications ---
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `⚠️ <span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    // --- Global State ---
+    let currentCategory = 'sublimation';
+    window.quoteData = null;
+    
+    const categoryNames = {
+      'sublimation': 'Full Print Sublimation Jersey',
+      'silkscreen': 'T-Shirt (Silkscreen Printing)',
+      'dtf_shirt': 'T-Shirt (DTF Printing)',
+      'lanyard': 'Lanyard (Sublimation)',
+      'apron': 'Apron (DTF/Silkscreen)',
+      'cap': 'Cap (DTF/Embroidery)',
+      'bunting': 'Bunting (Tarpaulin 380gsm)',
+      'banner': 'Banner (Tarpaulin 380gsm)'
+    };
+
+    function switchCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.category-card').forEach(c => c.classList.remove('active'));
+      document.querySelector(`.category-card[data-category="${cat}"]`).classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + cat).classList.add('active');
+      calculate();
+    }
+
+    // --- Data Matrices ---
+    const shirtSizeConfig = [
+      { id: 'xs', label: 'XS', sur: 0 }, { id: 's', label: 'S', sur: 0 }, { id: 'm', label: 'M', sur: 0 },
+      { id: 'l', label: 'L', sur: 0 }, { id: 'xl', label: 'XL', sur: 0 }, { id: '2xl', label: '2XL', sur: 0 },
+      { id: '3xl', label: '3XL', sur: 3 }, { id: '5xl', label: '5XL', sur: 6 }, { id: '7xl', label: '7XL', sur: 9 }
+    ];
+
+    const ssMatrix = [
+      [7.82, 8.84, 9.86, 10.88, 11.90, 12.92, 13.94, 15.30], [5.55, 6.57, 7.59, 8.61, 9.63, 10.65, 11.67, 13.03],
+      [3.74, 4.76, 5.78, 6.80, 7.82, 8.84, 9.86, 11.22], [2.72, 3.74, 4.76, 5.78, 6.80, 7.82, 8.84, 10.20],
+      [1.99, 3.01, 4.03, 5.05, 6.07, 7.09, 8.11, 9.47], [1.78, 2.80, 3.82, 4.84, 5.86, 6.88, 7.90, 9.26],
+      [1.59, 2.61, 3.63, 4.65, 5.67, 6.69, 7.71, 9.07], [1.29, 2.31, 3.33, 4.35, 5.37, 6.39, 7.41, 8.77],
+      [1.20, 2.22, 3.24, 4.26, 5.28, 6.30, 7.32, 8.68], [1.10, 2.12, 3.14, 4.16, 5.18, 6.20, 7.22, 8.58] 
+    ];
+
+    function getSSTier(qty) {
+      if(qty < 11) return 0; if(qty < 21) return 1; if(qty < 31) return 2; if(qty < 51) return 3;
+      if(qty < 81) return 4; if(qty < 101) return 5; if(qty < 201) return 6; if(qty < 301) return 7;
+      if(qty < 501) return 8; return 9;
+    }
+
+    function buildSizeGrid(prefix) {
+      let html = '';
+      shirtSizeConfig.forEach(s => {
+        let badge = s.sur > 0 ? `+RM${s.sur}` : '';
+        html += `<div class="size-item"><label>${s.label}</label><div class="surcharge-badge">${badge}</div>
+                 <div class="stepper-wrapper">
+                    <button type="button" class="stepper-btn" onclick="stepVal('${prefix}_qty_${s.id}', -1)">-</button>
+                    <input type="number" id="${prefix}_qty_${s.id}" class="size-input calc-trigger" min="0" value="0">
+                    <button type="button" class="stepper-btn" onclick="stepVal('${prefix}_qty_${s.id}', 1)">+</button>
+                 </div></div>`;
+      });
+      document.getElementById(`${prefix}_sizeGridContainer`).innerHTML = html;
+    }
+    
+    buildSizeGrid('sub'); buildSizeGrid('silk'); buildSizeGrid('dtf');
+
+    function stepVal(id, delta) {
+      let el = document.getElementById(id);
+      if(!el) return;
+      let min = parseInt(el.min) || 0;
+      let val = parseInt(el.value) || 0;
+      val += delta;
+      if(val < min) val = min;
+      el.value = val;
+      
+      // Dispatch an event to ensure listeners trigger calculation properly
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    // Auto-select UI logic
+    document.getElementById('comm_value').addEventListener('input', function() {
+        if (this.value > 0 && document.getElementById('comm_type').value === 'none') {
+            document.getElementById('comm_type').value = 'flat';
+        }
+    });
+    
+    document.getElementById('discount_value').addEventListener('input', function() {
+        if (this.value > 0 && document.getElementById('discount_type').value === 'none') {
+            document.getElementById('discount_type').value = 'fixed';
+        }
+    });
+
+    document.getElementById('custom_design_amount').addEventListener('input', function() {
+        if (this.value > 0) document.getElementById('custom_design_enabled').checked = true;
+    });
+
+    // --- ITEM CALCULATION LOGIC ---
+    function calcSublimation() {
+      let qty = 0, sizeSur = 0, bDown = [];
+      let sizeBreakdown = [];
+      shirtSizeConfig.forEach(s => { 
+        let q = parseInt(document.getElementById(`sub_qty_${s.id}`).value)||0; 
+        qty += q; sizeSur += (q * s.sur); 
+        if(q>0) sizeBreakdown.push(`${s.label}:${q}`);
+      });
+      document.getElementById('sub_totalQty').innerText = qty;
+
+      let unitBase = 0;
+      if(qty>0 && qty<=10) unitBase=45; else if(qty<=30) unitBase=35; else if(qty<=50) unitBase=33; 
+      else if(qty<=100) unitBase=30; else if(qty<=200) unitBase=28; else if(qty<=300) unitBase=25; 
+      else if(qty<=500) unitBase=23; else if(qty<=1000) unitBase=20; else if(qty>1000) unitBase=18;
+
+      let bCost = qty * unitBase;
+      if(qty>0) {
+        bDown.push(`👕 Sizes: ${sizeBreakdown.join(', ')}`);
+        bDown.push(`💰 Base Cost: ${qty} pcs x RM${unitBase}`);
+        if(sizeSur>0) bDown.push(`📏 Extra Size Surcharge: RM${sizeSur}`);
+      }
+
+      let subAddonsList = [
+        {id: 'sub_add_long', price: 5, name: 'Long Sleeves'},
+        {id: 'sub_add_raglan', price: 5, name: 'Raglan Sleeves'},
+        {id: 'sub_add_muslimah', price: 15, name: 'Muslimah Cut'},
+        {id: 'sub_add_oversize', price: 15, name: 'Oversize Cut'},
+        {id: 'sub_add_chest', price: 3, name: 'Chest Pocket'},
+        {id: 'sub_add_name', price: 4, name: 'Personal Name'},
+        {id: 'sub_add_num', price: 4, name: 'Personal Number'},
+        {id: 'sub_add_namenum', price: 7, name: 'Name & Number'}
+      ];
+
+      let perPieceAddonsTotal = 0;
+      let mat = parseFloat(document.getElementById('sub_material').value);
+      if(mat > 0) { perPieceAddonsTotal += (qty*mat); bDown.push(`🧵 Material Upgrade: ${qty} pcs x RM${mat}`); }
+      
+      let urg = parseFloat(document.getElementById('sub_urgent').value);
+      if(urg > 0) { perPieceAddonsTotal += (qty*urg); bDown.push(`⏱️ Urgent Order: ${qty} pcs x RM${urg}`); }
+
+      let collarDropdown = document.getElementById('sub_collar_type');
+      if(collarDropdown) {
+          let collarQty = parseInt(document.getElementById('sub_add_collar').value) || 0;
+          let collarPrice = parseFloat(collarDropdown.value);
+          let collarName = collarDropdown.options[collarDropdown.selectedIndex].getAttribute('data-name');
+
+          if(collarQty > 0) {
+              let cost = collarQty * collarPrice;
+              perPieceAddonsTotal += cost;
+              bDown.push(`✨ Collar (${collarName}): ${collarQty} pcs ${collarPrice > 0 ? 'x RM'+collarPrice : '(Free)'}`);
+          }
+      }
+
+      subAddonsList.forEach(a => {
+        let el = document.getElementById(a.id);
+        if(el) {
+            let q = parseInt(el.value) || 0;
+            if(q > 0) {
+              perPieceAddonsTotal += (q * a.price);
+              bDown.push(`✨ ${a.name}: ${q} pcs x RM${a.price}`);
+            }
+        }
+      });
+
+      let sCost = perPieceAddonsTotal + sizeSur;
+      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
+    }
+
+    function calcSilkscreen() {
+      let qty = 0, sizeSur = 0, bDown = [];
+      shirtSizeConfig.forEach(s => { 
+        let q = parseInt(document.getElementById(`silk_qty_${s.id}`).value)||0; 
+        qty += q; sizeSur += (q * s.sur); 
+      });
+      document.getElementById('silk_totalQty').innerText = qty;
+
+      if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
+
+      let sBase = parseFloat(document.getElementById('silk_shirtType').value);
+      let bCost = qty * sBase;
+      bDown.push(`👕 Base Shirt: ${qty} pcs x RM${sBase}`);
+
+      let fColors = parseInt(document.getElementById('silk_front_colors').value);
+      let bColors = parseInt(document.getElementById('silk_back_colors').value);
+      let pCost = 0; let tier = getSSTier(qty);
+
+      if (fColors >= 0) { let fc = ssMatrix[tier][fColors]; pCost += (qty*fc); bDown.push(`🎨 Front Print (${fColors+1}C): ${qty} pcs x RM${fc}`); }
+      if (bColors >= 0) { let bc = ssMatrix[tier][bColors]; pCost += (qty*bc); bDown.push(`🎨 Back Print (${bColors+1}C): ${qty} pcs x RM${bc}`); }
+
+      let lsQty = parseInt(document.getElementById('silk_ls_qty').value) || 0;
+      let lsCost = lsQty * 5;
+      if(lsQty>0) bDown.push(`🧵 Long Sleeve Upgrade: ${lsQty} pcs x RM5`);
+      if(sizeSur>0) bDown.push(`📏 Size Surcharge: RM${sizeSur}`);
+
+      let sCost = pCost + lsCost + sizeSur;
+      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
+    }
+
+    function calcDTF() {
+      let qty = 0, sizeSur = 0, bDown = [];
+      shirtSizeConfig.forEach(s => { 
+        let q = parseInt(document.getElementById(`dtf_qty_${s.id}`).value)||0; 
+        qty += q; sizeSur += (q * s.sur); 
+      });
+      document.getElementById('dtf_totalQty').innerText = qty;
+      if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
+
+      let sBase = parseFloat(document.getElementById('dtf_shirtType').value);
+      let bCost = qty * sBase;
+      bDown.push(`👕 Base Shirt: ${qty} pcs x RM${sBase}`);
+
+      let fSize = parseFloat(document.getElementById('dtf_front_size').value);
+      let bSize = parseFloat(document.getElementById('dtf_back_size').value);
+      let pSizeCost = (qty * fSize) + (qty * bSize);
+
+      if(fSize > 0) bDown.push(`🖨️ Front Print: ${qty} pcs x RM${fSize}`);
+      if(bSize > 0) bDown.push(`🖨️ Back Print: ${qty} pcs x RM${bSize}`);
+
+      let slvQty = parseInt(document.getElementById('dtf_sleeve_qty').value) || 0;
+      let slvCost = slvQty * 3;
+      if(slvQty>0) bDown.push(`💪 Sleeve Print: ${slvQty} arms x RM3`);
+
+      let lsQty = parseInt(document.getElementById('dtf_ls_qty').value) || 0;
+      let lsCost = lsQty * 5;
+      if(lsQty>0) bDown.push(`🧵 Long Sleeve Upgrade: ${lsQty} pcs x RM5`);
+      if(sizeSur>0) bDown.push(`📏 Size Surcharge: RM${sizeSur}`);
+
+      let sCost = pSizeCost + slvCost + lsCost + sizeSur;
+      return { base: bCost, sur: sCost, breakdown: bDown, qty: qty };
+    }
+
+    function calcSimple(type) {
+      let prefix = type === 'silkscreen' ? 'silk' : (type === 'bunting' ? 'bun' : (type === 'banner' ? 'banner' : type.substring(0,3)));
+      let el = document.getElementById(prefix+'_qty');
+      let qty = el ? parseInt(el.value) || 0 : 0;
+      let bDown = [];
+
+      if(qty === 0) return {base:0, sur:0, breakdown: [], qty: 0};
+
+      let unit = 0;
+      if (type === 'lanyard') {
+        if(qty>=20000) unit=3.5; else if(qty>=10000) unit=4; else if(qty>=1000) unit=5.5; else if(qty>=900) unit=5.7;
+        else if(qty>=800) unit=6; else if(qty>=700) unit=6.5; else if(qty>=600) unit=7; else if(qty>=500) unit=7.5;
+        else if(qty>=400) unit=8; else if(qty>=300) unit=8.5; else if(qty>=200) unit=9; else if(qty>=100) unit=10;
+        else if(qty>=80) unit=12; else if(qty>=50) unit=13; else if(qty>=40) unit=14; else if(qty>=30) unit=15;
+        else if(qty>=20) unit=16; else unit=19;
+      } else if (type === 'apron') {
+        let aType = document.getElementById('apr_type').value;
+        if(aType === 'basic') { if(qty<10) unit=20; else if(qty<20) unit=19; else if(qty<30) unit=17; else if(qty<=50) unit=15; else unit=13.5; } 
+        else { if(qty<10) unit=30; else if(qty<20) unit=25; else if(qty<30) unit=23; else if(qty<=50) unit=20; else unit=18.5; }
+      } else if (type === 'cap') {
+        let cType = document.getElementById('cap_type').value;
+        if(cType === 'dtf') { if(qty===10) unit=15; else if(qty<=20) unit=14.5; else if(qty<=30) unit=14; else if(qty<=50) unit=13.5; else if(qty<=100) unit=13; else unit=12; } 
+        else { if(qty===10) unit=22.5; else if(qty<=20) unit=19.6; else if(qty<=30) unit=17.8; else if(qty<=50) unit=16.9; else if(qty<=100) unit=15.7; else unit=14.9; }
+      } else if (type === 'bunting' || type === 'banner') {
+        let sizeVal = document.getElementById(prefix+'_size').value;
+        if (sizeVal === 'custom') {
+           let w = parseFloat(document.getElementById(prefix+'_w').value) || 0;
+           let h = parseFloat(document.getElementById(prefix+'_h').value) || 0;
+           let area = w * h;
+           if(area === 0) unit = 0; else unit = Math.max(23, (area * 2) + 3); 
+           bDown.push(`📐 Custom Size (${w}' x ${h}'): ${area} sqft`);
+        } else { unit = parseFloat(sizeVal); }
+      }
+
+      if(unit > 0) { bDown.push(`📦 Base Price: ${qty} pcs x RM${unit}`); }
+      return { base: qty * unit, sur: 0, breakdown: bDown, qty: qty };
+    }
+
+    // --- MAIN CALCULATOR ENGINE ---
+    function calculate() {
+      let item;
+      if(currentCategory === 'sublimation') item = calcSublimation();
+      else if(currentCategory === 'silkscreen') item = calcSilkscreen();
+      else if(currentCategory === 'dtf_shirt') item = calcDTF();
+      else item = calcSimple(currentCategory);
+
+      // Global Configs
+      let designFee = 0;
+      if(document.getElementById('custom_design_enabled').checked) {
+          designFee = parseFloat(document.getElementById('custom_design_amount').value) || 0;
+      }
+
+      let shippingFee = parseFloat(document.getElementById('shipping_fee').value) || 0;
+
+      // Internal Commission (Hidden from Client)
+      let commType = document.getElementById('comm_type').value;
+      let commVal = parseFloat(document.getElementById('comm_value').value) || 0;
+      let commAmt = 0;
+      if (item.qty > 0 && commVal > 0) {
+          if (commType === 'per_item') commAmt = item.qty * commVal;
+          else if (commType === 'flat') commAmt = commVal;
+      }
+      
+      // Merge Commission into Surcharges so customer math works perfectly
+      let displayedSurcharge = item.sur + commAmt + designFee + shippingFee;
+      
+      let grandTotal = item.base + displayedSurcharge;
+
+      // Discount
+      let dType = document.getElementById('discount_type').value;
+      let dVal = parseFloat(document.getElementById('discount_value').value) || 0;
+      let discountAmt = 0;
+      
+      if (grandTotal > 0 && dVal > 0) {
+          if (dType === 'percent') discountAmt = grandTotal * (dVal / 100);
+          else if (dType === 'fixed') discountAmt = dVal > grandTotal ? grandTotal : dVal;
+          grandTotal -= discountAmt;
+      }
+
+      let depositAmt = grandTotal * 0.70;
+      let balanceAmt = grandTotal - depositAmt;
+
+      if(!window.simulatingPricing) {
+        document.getElementById('out_base').innerText = `RM ${item.base.toFixed(2)}`;
+        document.getElementById('out_surcharge').innerText = `RM ${displayedSurcharge.toFixed(2)}`;
+        document.getElementById('out_discount').innerText = `-RM ${discountAmt.toFixed(2)}`;
+        
+        document.getElementById('out_total').innerText = `RM ${grandTotal.toFixed(2)}`;
+        document.getElementById('out_deposit').innerText = `RM ${depositAmt.toFixed(2)}`;
+        document.getElementById('out_balance').innerText = `RM ${balanceAmt.toFixed(2)}`;
+        
+        // Internal Commission Display (Red Box)
+        document.getElementById('out_commission_val').innerText = `RM ${commAmt.toFixed(2)}`;
+
+        // Breakdown List UI Update
+        let bdHtml = item.breakdown.length > 0 ? "<ul><li>" + item.breakdown.join("</li><li>") + "</li></ul>" : "<i style='color:var(--text-secondary);'>No configuration entered.</i>";
+        document.getElementById('breakdown-list').innerHTML = bdHtml;
+
+        // Store data for PDF/WhatsApp
+        window.quoteData = { item, designFee, shippingFee, discountAmt, commAmt, displayedSurcharge, grandTotal, depositAmt, balanceAmt };
+      }
+      
+      return grandTotal;
+    }
+
+    // --- TIERS GENERATOR ---
+    function simulatePricing(targetQty) {
+      window.simulatingPricing = true;
+      let cat = currentCategory;
+      let prefix = cat === 'silkscreen' ? 'silk' : (cat === 'bunting' ? 'bun' : (cat === 'banner' ? 'banner' : cat.substring(0,3)));
+      let savedState = {};
+
+      if (cat === 'sublimation' || cat === 'silkscreen' || cat === 'dtf_shirt') {
+          shirtSizeConfig.forEach(s => {
+              let el = document.getElementById(`${prefix}_qty_${s.id}`);
+              savedState[s.id] = el.value;
+              el.value = (s.id === 'm') ? targetQty : 0; 
+          });
+      } else {
+          let el = document.getElementById(prefix + '_qty');
+          if(el) {
+            savedState['qty'] = el.value;
+            el.value = targetQty;
+          }
+      }
+
+      let total = calculate();
+
+      if (cat === 'sublimation' || cat === 'silkscreen' || cat === 'dtf_shirt') {
+          shirtSizeConfig.forEach(s => { document.getElementById(`${prefix}_qty_${s.id}`).value = savedState[s.id]; });
+      } else {
+          let el = document.getElementById(prefix + '_qty');
+          if(el) el.value = savedState['qty'];
+      }
+
+      window.simulatingPricing = false;
+      return { total: total, unit: total / targetQty };
+    }
+
+    function generatePriceTiers() {
+      let q1 = 30, q2 = 50, q3 = 100, q4 = 200;
+      let t1 = simulatePricing(q1);
+      let t2 = simulatePricing(q2);
+      let t3 = simulatePricing(q3);
+      let t4 = simulatePricing(q4);
+
+      calculate(); 
+
+      let tbody = document.getElementById('tier-tbody');
+      tbody.innerHTML = `
+        <tr><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">${q1} pcs</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">RM ${t1.unit.toFixed(2)}</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main); font-weight: bold;">RM ${t1.total.toFixed(2)}</td></tr>
+        <tr><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">${q2} pcs</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">RM ${t2.unit.toFixed(2)}</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main); font-weight: bold;">RM ${t2.total.toFixed(2)}</td></tr>
+        <tr><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">${q3} pcs</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">RM ${t3.unit.toFixed(2)}</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main); font-weight: bold;">RM ${t3.total.toFixed(2)}</td></tr>
+        <tr><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">${q4} pcs</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main);">RM ${t4.unit.toFixed(2)}</td><td style="padding: 12px; border-bottom: 1px solid var(--border-main); font-weight: bold;">RM ${t4.total.toFixed(2)}</td></tr>
+      `;
+
+      document.getElementById('tier-modal').classList.add('show');
+    }
+    
+    function copyTiersToClipboard() {
+      let q1 = 30, q2 = 50, q3 = 100, q4 = 200;
+      let t1 = simulatePricing(q1);
+      let t2 = simulatePricing(q2);
+      let t3 = simulatePricing(q3);
+      let t4 = simulatePricing(q4);
+      calculate();
+
+      let text = `*Volume Pricing Estimate:*\n_(${categoryNames[currentCategory]})_\n\n`;
+      text += `• *${q1} pcs:* RM ${t1.unit.toFixed(2)} /pc (Total: RM ${t1.total.toFixed(2)})\n`;
+      text += `• *${q2} pcs:* RM ${t2.unit.toFixed(2)} /pc (Total: RM ${t2.total.toFixed(2)})\n`;
+      text += `• *${q3} pcs:* RM ${t3.unit.toFixed(2)} /pc (Total: RM ${t3.total.toFixed(2)})\n`;
+      text += `• *${q4} pcs:* RM ${t4.unit.toFixed(2)} /pc (Total: RM ${t4.total.toFixed(2)})\n`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Pricing tiers copied to clipboard!");
+        document.getElementById('tier-modal').classList.remove('show');
+      }).catch(err => {
+        showToast("Failed to copy. Try selecting manually.");
+      });
+    }
+
+    // --- FINALIZE MODAL ---
+    function openFinalizeModal() {
+        if(!window.quoteData || window.quoteData.grandTotal === 0) { showToast("Calculate an item first."); return; }
+        document.getElementById('finalize-modal').classList.add('show');
+    }
+
+    // --- PREPARE DATA FOR DOCUMENTS ---
+    function prepareDocumentData() {
+        let q = window.quoteData;
+        let d = new Date();
+        
+        let dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        let validDate = new Date(d);
+        validDate.setDate(validDate.getDate() + 14);
+        let validStr = validDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        let refStr = `KS-Q-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${Math.floor(Math.random()*9000)+1000}`;
+
+        document.getElementById('pdf-ref').innerText = refStr;
+        document.getElementById('pdf-date').innerText = dateStr;
+        document.getElementById('pdf-valid').innerText = validStr;
+
+        document.getElementById('pdf-client-name').innerText = document.getElementById('client_name').value || 'Valued Customer';
+        document.getElementById('pdf-client-company').innerText = document.getElementById('client_company').value || '';
+
+        // Format Item Detail String
+        let detailString = q.item.breakdown.map(b => b.replace(/<\/?[^>]+(>|$)/g, "").replace('📦 ', '').replace('👕 ', '')).join('<br>');
+        
+        // Ensure PDF uses pure item math without the design/shipping added yet (but comm is added)
+        let basePlusItemSur = q.item.base + q.item.sur + q.commAmt; 
+
+        let html = `
+        <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 12px 10px; text-align: center; vertical-align: top;">1</td>
+            <td style="padding: 12px 10px; text-align: left;">
+                <strong style="color: #1e3a5f;">${categoryNames[currentCategory]}</strong><br>
+                <span style="font-size: 11px; color: #555;">${detailString}</span>
+            </td>
+            <td style="padding: 12px 10px; text-align: center; vertical-align: top;">${q.item.qty}</td>
+            <td style="padding: 12px 10px; text-align: right; vertical-align: top; font-weight: bold;">RM ${basePlusItemSur.toFixed(2)}</td>
+        </tr>`;
+        document.getElementById('pdf-tbody').innerHTML = html;
+
+        document.getElementById('pdf-subtotal').innerText = `RM ${basePlusItemSur.toFixed(2)}`;
+        
+        if(q.designFee > 0) { document.getElementById('pdf-row-design').style.display = 'table-row'; document.getElementById('pdf-design').innerText = `RM ${q.designFee.toFixed(2)}`;
+        } else { document.getElementById('pdf-row-design').style.display = 'none'; }
+
+        if(q.shippingFee > 0) { document.getElementById('pdf-row-shipping').style.display = 'table-row'; document.getElementById('pdf-shipping').innerText = `RM ${q.shippingFee.toFixed(2)}`;
+        } else { document.getElementById('pdf-row-shipping').style.display = 'none'; }
+
+        if(q.discountAmt > 0) { document.getElementById('pdf-row-discount').style.display = 'table-row'; document.getElementById('pdf-discount').innerText = `-RM ${q.discountAmt.toFixed(2)}`;
+        } else { document.getElementById('pdf-row-discount').style.display = 'none'; }
+
+        document.getElementById('pdf-grand').innerText = `RM ${q.grandTotal.toFixed(2)}`;
+        document.getElementById('pdf-deposit').innerText = `RM ${q.depositAmt.toFixed(2)}`;
+        document.getElementById('pdf-balance').innerText = `RM ${q.balanceAmt.toFixed(2)}`;
+        
+        return refStr;
+    }
+
+    // --- PREVIEW QUOTATION (Visual) ---
+    function previewCorporateDocument() {
+        prepareDocumentData();
+        const target = document.getElementById('print-quote-document');
+        
+        target.style.left = '0';
+        target.style.zIndex = '-1000';
+        
+        setTimeout(() => {
+            html2canvas(target, { scale: 1.5, useCORS: true, logging: false }).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                document.getElementById('preview-img').src = imgData;
+                document.getElementById('preview-modal').classList.add('show');
+                target.style.left = '-9999px';
+            });
+        }, 100);
+    }
+    
+    function closePreviewModal() {
+        document.getElementById('preview-modal').classList.remove('show');
+    }
+
+    // --- CORPORATE PDF OUTPUT ---
+    function generateCorporatePDF() {
+        let refStr = prepareDocumentData();
+        const target = document.getElementById('print-quote-document');
+        
+        target.style.left = '0';
+        target.style.zIndex = '-1000';
+        
+        setTimeout(() => {
+            html2canvas(target, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const { jsPDF } = window.jspdf;
+                
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`Quotation_${refStr}.pdf`);
+                
+                target.style.left = '-9999px';
+                document.getElementById('finalize-modal').classList.remove('show');
+                showToast("Official PDF Downloaded!");
+            }).catch(err => {
+                target.style.left = '-9999px';
+                showToast("Failed to generate PDF.");
+            });
+        }, 100);
+    }
+
+    // --- HIGH-RES PNG GENERATOR ---
+    function generateCorporatePNG() {
+        let refStr = prepareDocumentData();
+        const target = document.getElementById('print-quote-document');
+        
+        target.style.left = '0';
+        target.style.zIndex = '-1000';
+        
+        setTimeout(() => {
+            html2canvas(target, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                let link = document.createElement('a');
+                link.download = `Quotation_${refStr}.png`;
+                link.href = imgData;
+                link.click();
+                
+                target.style.left = '-9999px';
+                document.getElementById('finalize-modal').classList.remove('show');
+                showToast("Image Downloaded!");
+            });
+        }, 100);
+    }
+
+    // --- WHATSAPP OUTPUT ---
+    function sendWhatsApp() {
+      let client = document.getElementById('client_name').value || 'Customer';
+      let company = document.getElementById('client_company').value;
+      let countryCode = document.getElementById('wa_country_code').value;
+      let rawNumber = document.getElementById('wa_target_number').value;
+      let cleanNumber = rawNumber.replace(/\D/g, ''); 
+      if (cleanNumber.startsWith('0')) cleanNumber = cleanNumber.substring(1);
+      
+      if(!cleanNumber) {
+        showToast("Please enter a WhatsApp number.");
+        return;
+      }
+
+      let q = window.quoteData;
+      let msg = `*OFFICIAL QUOTATION*\n*KidzStudios*\n\n`;
+      msg += `*To:* ${client} ${company ? `(${company})` : ''}\n\n`;
+      
+      msg += `*PRODUCT:* ${categoryNames[currentCategory]} (Qty: ${q.item.qty})\n`;
+      q.item.breakdown.forEach(b => {
+         msg += ` - ${b.replace(/<\/?[^>]+(>|$)/g, "")}\n`;
+      });
+      
+      let basePlusItemSur = q.item.base + q.item.sur + q.commAmt; 
+      
+      msg += `\n*SUMMARY:*\n`;
+      msg += `Item Total: RM ${basePlusItemSur.toFixed(2)}\n`;
+      if(q.designFee > 0) msg += `Design Fee: RM ${q.designFee.toFixed(2)}\n`;
+      if(q.shippingFee > 0) msg += `Shipping: RM ${q.shippingFee.toFixed(2)}\n`;
+      if(q.discountAmt > 0) msg += `Discount: -RM ${q.discountAmt.toFixed(2)}\n`;
+      
+      msg += `\n*GRAND TOTAL: RM ${q.grandTotal.toFixed(2)}*\n`;
+      msg += `_70% Deposit Required: RM ${q.depositAmt.toFixed(2)}_\n`;
+      msg += `_Balance on Completion: RM ${q.balanceAmt.toFixed(2)}_\n\n`;
+      msg += `Thank you! Please let us know if you have any questions.`;
+      
+      window.open(`https://api.whatsapp.com/send?phone=${countryCode}${cleanNumber}&text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // --- Event Listeners ---
+    document.addEventListener('input', function(e) { if(e.target.classList.contains('calc-trigger')) calculate(); });
+    document.addEventListener('change', function(e) { if(e.target.classList.contains('calc-trigger') || e.target.type === 'checkbox') calculate(); });
+    
+    // Init
+    calculate();
+
+  </script>
+
+</body>
+</html>
