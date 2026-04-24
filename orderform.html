@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidz Studios Job Sheet - Custom Logo</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,900&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- PRINT SETTINGS --- */
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        :root {
+            --navy: #131738; 
+            --red: #b91c1c;  
+            --green: #16a34a; 
+            --blue: #2563eb;
+            --border: 1.5px solid #000; 
+            --light-bg: #f0f4f8; 
+        }
+
+        /* STRICTLY ENFORCE POPPINS EVERYWHERE */
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', Arial, sans-serif !important;
+            margin: 0;
+            padding: 0;
+            color: #000;
+        }
+
+        body {
+            background-color: #525659;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        input {
+            color: #000;
+            text-transform: uppercase;
+        }
+        
+        input::placeholder { color: #999; opacity: 1; }
+
+        .heavy-font { font-weight: 900; }
+
+        /* --- A4 CONTAINER --- */
+        .a4-sheet {
+            width: 297mm; 
+            height: 210mm; 
+            background: white;
+            padding: 8mm 10mm;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* --- FLOATING CONTROLS --- */
+        .floating-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: 0.2s;
+        }
+        .export-pdf-btn { background: var(--red); }
+        .export-pdf-btn:hover { background: #9c0e18; transform: translateY(-2px); }
+        
+        .export-img-btn { background: var(--blue); }
+        .export-img-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        
+        .reset-btn { background: #4a5568; }
+        .reset-btn:hover { background: #2d3748; transform: translateY(-2px); }
+
+        /* --- MODAL SETTINGS --- */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px); overflow-y: auto;
+        }
+        .modal-content {
+            background-color: #fefefe; margin: 5% auto; padding: 20px; border-radius: 12px;
+            width: 90%; max-width: 1000px; box-shadow: 0 5px 25px rgba(0,0,0,0.5); text-align: center; position: relative;
+        }
+        .close-btn { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover, .close-btn:focus { color: black; }
+        .modal-title { font-size: 20px; font-weight: 900; color: var(--navy); margin-bottom: 15px; }
+        #previewImage { width: 100%; height: auto; border: 2px solid #ddd; border-radius: 4px; margin-bottom: 20px; }
+        .modal-actions { display: flex; justify-content: center; gap: 15px; }
+
+        /* --- PRINT AND IMAGE EXPORT MODE --- */
+        @media print {
+            body { background: white; }
+            .a4-sheet { box-shadow: none !important; width: 297mm; height: 210mm; padding: 8mm 10mm; margin: 0; page-break-inside: avoid; }
+            input::placeholder { color: transparent !important; }
+            .upload-hint, .floating-controls, .modal, .hidden-date-picker { display: none !important; }
+            .col-header-input { border-bottom: none !important; }
+            .t-val-input:empty:before { content: '' !important; }
+        }
+
+        .export-mode { box-shadow: none !important; }
+        .export-mode input::placeholder { color: transparent !important; }
+        .export-mode .upload-hint { display: none !important; }
+        .export-mode .col-header-input { border-bottom: none !important; }
+        .export-mode .t-val-input:empty:before { content: '' !important; }
+
+        /* --- HEADER --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 3px solid var(--navy);
+            padding-bottom: 2mm;
+            margin-bottom: 3mm;
+            height: 14mm; 
+        }
+
+        .header-logo-area {
+            position: relative;
+            height: 100%;
+            width: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            cursor: pointer;
+        }
+        .header-logo-area img { max-height: 100%; max-width: 100%; object-fit: contain; }
+
+        .header-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2px 10px;
+            font-weight: 900;
+            font-size: 13px;
+            color: var(--navy);
+            text-transform: uppercase;
+        }
+        .header-info span { text-align: right; color: var(--navy); display: flex; align-items: flex-end; font-style: italic;}
+        .header-info input { border: none; border-bottom: 1.5px solid var(--navy); font-weight: 900; width: 160px; font-size: 13px; outline: none; background: transparent; padding-left: 2px;}
+
+        /* --- MAIN CONTENT --- */
+        .main-body { display: flex; gap: 5mm; flex-grow: 1; min-height: 0; }
+
+        .design-wrapper { flex: 0 0 42%; display: flex; flex-direction: column; }
+
+        .design-area {
+            background: radial-gradient(circle, #293250 0%, #101223 100%);
+            border: var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .design-area img { max-height: 95%; max-width: 95%; object-fit: contain; }
+        
+        .upload-hint {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+        .design-area:hover .upload-hint, .header-logo-area:hover .upload-hint { opacity: 1; }
+
+        /* Form Details Grid */
+        .form-details { flex: 1; display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 3mm; }
+
+        .col-header-input {
+            color: var(--red); font-size: 16px; text-transform: uppercase; font-weight: 900;
+            margin-bottom: 3px; border: none; background: transparent; outline: none; width: 100%;
+        }
+        .col-header-input:focus { border-bottom: 1px dashed var(--red); }
+
+        .box { border: var(--border); display: flex; flex-direction: column; height: 100%; }
+        
+        .checkbox-row { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: bold; padding: 2px 6px; text-transform: uppercase; color: #000; }
+        .checkbox-row input { accent-color: var(--navy); }
+        .dark-section { background: var(--navy); padding: 3px 0; }
+        .dark-section .checkbox-row { color: #fff; }
+        .dark-section-title { color: #fff; padding: 2px 6px; font-size: 10px; font-weight: bold; }
+        
+        .light-section { background: #fff; padding: 3px 0; }
+        .sub-checks { padding-left: 20px; } 
+        .name-number-box { background: var(--navy); margin-top: auto; padding: 3px 0; }
+        .name-number-box .checkbox-row { color: #fff; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 11px; text-transform: uppercase; font-weight: bold; height: 100%; }
+        th { border: var(--border); padding: 5px 3px; text-align: center; background: var(--light-bg); color: var(--navy); font-weight: 900;}
+        td { border: var(--border); padding: 0; text-align: center; color: #000; }
+        
+        .size-col { width: 40%; border-right: var(--border); background: #fff; }
+        td input { width: 100%; height: 21px; border: none; text-align: center; font-weight: 900; outline: none; background: transparent;}
+        
+        .tot-txt { color: var(--red); font-size: 14px; font-weight: 900; padding: 5px !important; }
+
+        /* --- MIDDLE PRINT BAR --- */
+        .print-bar { background: var(--navy); display: flex; justify-content: space-between; padding: 6px 15px; font-size: 11px; font-weight: bold; margin: 3mm 0; }
+        .print-bar label { display: flex; align-items: center; gap: 5px; color: #fff;}
+        .print-bar input { accent-color: #fff; }
+
+        /* --- FOOTER --- */
+        .footer { display: grid; grid-template-columns: 2fr 0.8fr 0.8fr 0.8fr; gap: 4mm; height: 38mm; }
+        .disclaimer { font-size: 9px; line-height: 1.4; margin-bottom: 5px; color: #000; }
+        .disclaimer span { color: var(--red); font-weight: bold; font-style: italic; }
+        
+        .measure-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; height: 100%; }
+        .m-box { border: var(--border); display: flex; flex-direction: column; }
+        .m-head { font-weight: bold; font-size: 12px; padding: 3px; text-align: center; border-bottom: var(--border); background: var(--navy); color: #fff;}
+        .m-row { display: flex; border-bottom: 1px solid #ccc; flex-grow: 1; align-items: center; background: #fff;}
+        .m-row:last-child { border-bottom: none; }
+        .m-label { color: #000; width: 55px; padding: 3px 5px; font-size: 9px; font-weight: bold; height: 100%; display: flex; align-items: center; text-transform: uppercase; border-right: 1px solid #ccc;}
+        
+        .m-val-wrap { flex-grow: 1; display: flex; align-items: center; justify-content: center; height: 100%; overflow: hidden; }
+        .m-input { width: 100%; border: none; padding: 2px; outline: none; text-align: center; font-size: 10px; font-weight: bold; background: transparent;}
+
+        .sign-box { border: var(--border); display: flex; flex-direction: column; justify-content: space-between; text-align: center;}
+        .s-head { background: var(--navy); color: #fff; font-size: 10px; font-weight: bold; padding: 4px; border-bottom: var(--border);}
+        
+        .s-val-wrap { flex-grow: 1; display: flex; align-items: center; justify-content: center; height: 100%; overflow: hidden; }
+        .s-val-input { width: 100%; border: none; text-align: center; font-size: 12px; font-weight: bold; outline: none; background: transparent;}
+
+        /* --- STAMP & NATIVE DATE AREA --- */
+        .stamp-area { border: var(--border); display: flex; flex-direction: column; align-items: center; position: relative;}
+        .del-label { background: var(--navy); color: #fff; font-size: 10px; font-weight: bold; width: 100%; text-align: center; padding: 4px 0; border-bottom: var(--border);}
+        
+        .date-container { 
+            position: relative; 
+            width: 100%; 
+            flex-grow: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #fff;
+        }
+
+        .del-date-text { 
+            color: var(--red); 
+            font-weight: 900; 
+            font-size: 20px; 
+            text-align: center; 
+            width: 100%; 
+        }
+
+        .hidden-date-picker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .hidden-date-picker::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Total Area */
+        .total-area { border: var(--border); display: flex; flex-direction: column; text-align: center; background: #fff;}
+        .t-head { color: var(--red); font-weight: 900; font-size: 18px; padding-top: 5px; line-height: 1.2;}
+        .t-val-wrapper { flex-grow: 1; display: flex; align-items: center; justify-content: center; }
+        
+        .t-val-input { 
+            width: 100%; 
+            text-align: center; 
+            font-size: 42px; 
+            font-weight: 900; 
+            color: var(--red); 
+            outline: none; 
+            cursor: text;
+            line-height: 1;
+        }
+        .t-val-input:empty:before { 
+            content: attr(data-placeholder); 
+            color: var(--red); 
+            opacity: 0.5; 
+        }
+        
+        .t-status { background: var(--green); color: #fff; font-weight: bold; font-size: 16px; padding: 6px; letter-spacing: 1px;}
+    </style>
+</head>
+<body>
+
+<div id="previewModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closePreview()">&times;</span>
+        <div class="modal-title">Image Preview</div>
+        <img id="previewImage" src="" alt="Form Preview">
+        <div class="modal-actions">
+            <button class="btn reset-btn" onclick="closePreview()">Cancel</button>
+            <button class="btn export-img-btn" onclick="downloadImage()">💾 Download Image</button>
+        </div>
+    </div>
+</div>
+
+<div class="floating-controls hide-on-print">
+    <button type="button" class="btn reset-btn" onclick="resetForm()">🔄 Reset</button>
+    <button type="button" class="btn export-img-btn" onclick="openPreview()">🖼️ Image</button>
+    <button type="button" class="btn export-pdf-btn" onclick="window.print()">🖨️ PDF</button>
+</div>
+
+<form id="jobSheetForm" class="a4-sheet" onsubmit="return false;">
+
+    <div class="header">
+        <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+        <div class="header-logo-area" onclick="document.getElementById('logoUpload').click()">
+            <div class="upload-hint hide-on-print">Upload Logo</div>
+            <img id="logoImg" src="logo2.png" alt="Company Logo">
+        </div>
+
+        <div class="header-info">
+            <span>CUSTOMER |</span> <input type="text" placeholder="XXXX">
+            <span>JOB SHEET |</span> <input type="text" placeholder="XXXXXXXXXXXX">
+        </div>
+    </div>
+
+    <div class="main-body">
+        
+        <div class="design-wrapper">
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+            <div class="design-area" onclick="document.getElementById('imageUpload').click()">
+                <div class="upload-hint hide-on-print">Upload Mockup</div>
+                <img id="mockupImg" src="https://via.placeholder.com/400x400?text=UPLOAD+MOCKUP" alt="Artwork Mockup" crossorigin="anonymous">
+            </div>
+        </div>
+
+        <div class="form-details">
+            
+            <div style="display: flex; flex-direction: column;">
+                <input type="text" class="col-header-input heavy-font" value="DETAIL" readonly style="cursor:default;">
+                <div class="box">
+                    <div class="light-section">
+                        <div class="checkbox-row"><input type="checkbox"> COTTON</div>
+                        <div class="checkbox-row"><input type="checkbox"> MICROFIBER</div>
+                    </div>
+                    
+                    <div class="dark-section">
+                        <div class="dark-section-title">STYLE</div>
+                        <div class="checkbox-row"><input type="checkbox" checked> ROUNDNECK</div>
+                        <div class="checkbox-row"><input type="checkbox"> POLO</div>
+                        <div class="checkbox-row"><input type="checkbox"> MUSLIMAH</div>
+                        <div class="checkbox-row"><input type="checkbox"> V NECK</div>
+                        <div class="checkbox-row"><input type="checkbox"> RETRO</div>
+                        <div class="checkbox-row"><input type="checkbox"> NFL</div>
+                    </div>
+                    
+                    <div class="light-section sub-checks">
+                        <div class="checkbox-row"><input type="checkbox"> REVERSE EYELET</div>
+                        <div class="checkbox-row"><input type="checkbox"> RJPK</div>
+                        <div class="checkbox-row"><input type="checkbox"> LYCRA</div>
+                        <div class="checkbox-row"><input type="checkbox"> DIAMOND</div>
+                    </div>
+
+                    <div class="name-number-box">
+                        <div class="checkbox-row"><input type="checkbox"> NAME</div>
+                        <div class="checkbox-row"><input type="checkbox"> NUMBER</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column;">
+                <input type="text" class="col-header-input heavy-font" value="SHORT SLEEVE">
+                <div class="box">
+                    <table>
+                        <tr><th class="size-col">SIZE</th><th>QTY</th></tr>
+                        <tr><td class="size-col"><input type="text" value="XS"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="S"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="M"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="L"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="2XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="3XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="4XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="5XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="6XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="7XL"></td><td><input type="number" class="qty" data-group="adult"></td></tr>
+                        <tr style="border-top: var(--border);"><td class="tot-txt size-col">TOTAL</td><td class="tot-txt" id="tot-adult">00</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column;">
+                <input type="text" class="col-header-input heavy-font" value="KIDS SHORT">
+                <div class="box">
+                    <table>
+                        <tr><th class="size-col">SIZE</th><th>QTY</th></tr>
+                        <tr><td class="size-col"><input type="text" value="24"></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="26"></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="28"></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="30"></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="32"></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value="34"></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        
+                        <tr><td class="size-col"><input type="text" value=""></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value=""></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value=""></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value=""></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        <tr><td class="size-col"><input type="text" value=""></td><td><input type="number" class="qty" data-group="kids"></td></tr>
+                        
+                        <tr style="border-top: var(--border);"><td class="tot-txt size-col">TOTAL</td><td class="tot-txt" id="tot-kids">00</td></tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="print-bar">
+        <label><input type="checkbox" checked> SILKSCREEN</label>
+        <label><input type="checkbox"> FULL SUBLIMATION</label>
+        <label><input type="checkbox"> EMBROIDERY</label>
+        <label><input type="checkbox"> HD PRINT</label>
+        <label><input type="checkbox"> CUSTOM</label>
+    </div>
+
+    <div class="footer">
+        
+        <div style="display: flex; flex-direction: column;">
+            <div class="disclaimer">
+                Before we begin the printing process, we kindly request that you double-check the order details for confirmation. Once form <span>APRROVED</span>, we will not be responsible for any errors. Please review carefully and reply <span>"CHECKED"</span> if everything is correct, thank you.
+            </div>
+            
+            <div class="measure-grid">
+                <div class="m-box">
+                    <div class="m-head">FRONT</div>
+                    <div class="m-row">
+                        <div class="m-label">Width</div>
+                        <div class="m-val-wrap"><input type="text" class="m-input" placeholder="XXXX"></div>
+                    </div>
+                    <div class="m-row">
+                        <div class="m-label">Height</div>
+                        <div class="m-val-wrap"><input type="text" class="m-input" placeholder="XXXXX"></div>
+                    </div>
+                </div>
+                <div class="m-box">
+                    <div class="m-head">BACK</div>
+                    <div class="m-row">
+                        <div class="m-label">Width</div>
+                        <div class="m-val-wrap"><input type="text" class="m-input" placeholder="XXXXX"></div>
+                    </div>
+                    <div class="m-row">
+                        <div class="m-label">Height</div>
+                        <div class="m-val-wrap"><input type="text" class="m-input" placeholder="XXXXX"></div>
+                    </div>
+                </div>
+                <div class="m-box">
+                    <div class="m-head">SLEEVE</div>
+                    <div class="m-row">
+                        <div class="m-label">Width</div>
+                        <div class="m-val-wrap"><input type="text" class="m-input" placeholder="XXXXX"></div>
+                    </div>
+                    <div class="m-row">
+                        <div class="m-label">Height</div>
+                        <div class="m-val-wrap"><input type="text" class="m-input" placeholder="XXXXX"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sign-box">
+            <div style="flex:1; display:flex; flex-direction:column;">
+                <div class="s-head">DESIGNER</div>
+                <div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column;">
+                <div class="s-head">SALESPERSON</div>
+                <div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column;">
+                <div class="s-head">CUSTOMER</div>
+                <div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div>
+            </div>
+        </div>
+
+        <div class="stamp-area">
+            <div class="del-label">DELIVERY DATE</div>
+            <div class="date-container">
+                <div id="displayDate" class="del-date-text"></div>
+                <input type="date" id="actualDate" class="hidden-date-picker">
+            </div>
+        </div>
+
+        <div class="total-area">
+            <div class="t-head">TOTAL:</div>
+            <div class="t-val-wrapper">
+                <div id="tot-grand" class="t-val-input" contenteditable="true" data-placeholder="XXX"></div>
+            </div>
+            <div class="t-status">NORMAL</div>
+        </div>
+
+    </div>
+
+</form>
+
+<script>
+    // 1. Logo Upload Logic
+    const logoUpload = document.getElementById('logoUpload');
+    const logoImg = document.getElementById('logoImg');
+
+    logoUpload.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) { logoImg.src = e.target.result; }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 2. Mockup Image Upload Logic
+    const imageUpload = document.getElementById('imageUpload');
+    const mockupImg = document.getElementById('mockupImg');
+
+    imageUpload.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) { mockupImg.src = e.target.result; }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 3. Date Formatting
+    function formatDateToDisplay(dateString) {
+        if (!dateString) return "";
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
+    function setTodayDate() {
+        const actualDate = document.getElementById('actualDate');
+        const displayDate = document.getElementById('displayDate');
+        
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        
+        actualDate.value = `${yyyy}-${mm}-${dd}`;
+        displayDate.innerText = formatDateToDisplay(actualDate.value);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setTodayDate();
+        
+        document.getElementById('actualDate').addEventListener('input', (e) => {
+            document.getElementById('displayDate').innerText = formatDateToDisplay(e.target.value);
+        });
+    });
+
+    // 4. Quantity Calculations
+    const inputs = document.querySelectorAll('.qty');
+    inputs.forEach(input => { input.addEventListener('input', calculateTotals); });
+
+    function calculateTotals() {
+        let adultTotal = 0;
+        let kidsTotal = 0;
+
+        document.querySelectorAll('input[data-group="adult"]').forEach(i => { adultTotal += parseInt(i.value) || 0; });
+        document.querySelectorAll('input[data-group="kids"]').forEach(i => { kidsTotal += parseInt(i.value) || 0; });
+
+        document.getElementById('tot-adult').innerText = adultTotal.toString().padStart(2, '0');
+        document.getElementById('tot-kids').innerText = kidsTotal.toString().padStart(2, '0');
+        
+        let grandTotal = adultTotal + kidsTotal;
+        document.getElementById('tot-grand').innerText = grandTotal > 0 ? grandTotal : "";
+    }
+
+    // 5. Reset Form Logic
+    function resetForm() {
+        if(!confirm("Are you sure you want to clear all fields?")) return;
+        document.getElementById('jobSheetForm').reset();
+        
+        // Reset logo back to logo2.png
+        logoImg.src = "logo2.png";
+        
+        mockupImg.src = "https://via.placeholder.com/400x400?text=UPLOAD+MOCKUP";
+        
+        setTodayDate();
+        document.getElementById('tot-grand').innerText = "";
+        calculateTotals();
+    }
+
+    // 6. Export to Image 
+    let globalImgData = ""; 
+
+    function openPreview() {
+        const sheet = document.getElementById('jobSheetForm');
+        document.querySelector('.floating-controls').style.display = 'none';
+        sheet.classList.add('export-mode');
+
+        document.querySelectorAll('input').forEach(input => {
+            input.setAttribute('value', input.value);
+            if(input.type === 'checkbox' && input.checked) {
+                input.setAttribute('checked', 'checked');
+            } else if (input.type === 'checkbox') {
+                input.removeAttribute('checked');
+            }
+        });
+        
+        html2canvas(sheet, { 
+            scale: 2,          
+            useCORS: true,     
+            backgroundColor: "#ffffff" 
+        }).then(canvas => {
+            sheet.classList.remove('export-mode');
+            document.querySelector('.floating-controls').style.display = 'flex';
+
+            globalImgData = canvas.toDataURL('image/png');
+            document.getElementById('previewImage').src = globalImgData;
+            document.getElementById('previewModal').style.display = 'block';
+        });
+    }
+
+    function closePreview() {
+        document.getElementById('previewModal').style.display = 'none';
+        document.getElementById('previewImage').src = "";
+    }
+
+    function downloadImage() {
+        if (!globalImgData) return;
+        let downloadLink = document.createElement('a');
+        downloadLink.href = globalImgData;
+        downloadLink.download = 'Kidz_Studios_Job_Sheet.png';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        closePreview();
+    }
+</script>
+
+</body>
+</html>
