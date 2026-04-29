@@ -114,7 +114,7 @@
             width: 297mm;
             height: 210mm;
             background: white;
-            padding: 8mm 10mm;            /* safe margins for print */
+            padding: 8mm 10mm;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
@@ -163,10 +163,10 @@
         .print-bar label { display: flex; align-items: center; gap: 5px; color: #fff; }
         .print-bar input { accent-color: #fff; flex-shrink: 0; }
 
-        /* ----- FOOTER (widened sign column to prevent text clipping) ----- */
+        /* Footer grid – sign column widened further to 2fr */
         .footer {
             display: grid;
-            grid-template-columns: 2fr 1.8fr 0.7fr 0.8fr;   /* sign column now 1.8fr */
+            grid-template-columns: 2fr 2fr 0.7fr 0.8fr;   /* sign box now 2fr for extra breathing room */
             gap: 4mm;
             height: 38mm;
             width: 100%;
@@ -179,14 +179,15 @@
         .m-box { border: var(--border); display: flex; flex-direction: column; min-width: 0; min-height: 0; }
         .m-head {
             font-weight: bold;
-            font-size: 10px;               /* slightly bigger */
+            font-size: 10px;
             padding: 2px 4px;
             text-align: center;
             border-bottom: var(--border);
             background: var(--navy);
             color: #fff;
             white-space: nowrap;
-            /* no overflow:hidden – text always visible */
+            overflow: hidden;
+            text-overflow: ellipsis;   /* safety net if text is too long */
             line-height: 1.2;
         }
         .m-row { display: flex; border-bottom: 1px solid #ccc; flex-grow: 1; align-items: center; background: #fff; min-height: 0; }
@@ -200,18 +201,18 @@
         .s-head {
             background: var(--navy);
             color: #fff;
-            font-size: 10px;               /* slightly bigger */
+            font-size: 10px;
             font-weight: bold;
             padding: 4px 4px;
             border-bottom: var(--border);
             white-space: nowrap;
-            /* no overflow:hidden – text always visible */
+            overflow: hidden;
+            text-overflow: ellipsis;   /* will only trigger if column is somehow too narrow */
             line-height: 1.2;
         }
         .s-val-wrap { flex-grow: 1; display: flex; align-items: center; justify-content: center; height: 100%; overflow: hidden; min-height: 0; }
         .s-val-input { width: 100%; border: none; text-align: center; font-size: 12px; font-weight: bold; outline: none; background: transparent; min-width: 0; padding: 2px 4px; }
 
-        /* rest unchanged */
         .stamp-area { border: var(--border); display: flex; flex-direction: column; align-items: center; position: relative; min-width: 0; }
         .del-label { background: var(--navy); color: #fff; font-size: 10px; font-weight: bold; width: 100%; text-align: center; padding: 4px 0; border-bottom: var(--border); }
         .date-container { position: relative; width: 100%; flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #fff; }
@@ -226,7 +227,6 @@
         .t-val-input:empty:before { content: attr(data-placeholder); color: var(--red); opacity: 0.5; }
         .t-status { background: var(--green); color: #fff; font-weight: bold; font-size: 16px; padding: 6px; }
 
-        /* Export mode hides hints and placeholders */
         .export-mode .upload-hint { display: none !important; }
         .export-mode input::placeholder { color: transparent !important; }
         .export-mode .col-header-input { border-bottom: none !important; }
@@ -339,16 +339,16 @@
                             review carefully and reply <span>"CHECKED"</span> if everything is correct, thank you.
                         </div>
                         <div class="measure-grid">
-                            <div class="m-box"><div class="m-head">FRONT</div><div class="m-row"><div class="m-label">W</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="WW"></div></div><div class="m-row"><div class="m-label">H</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="HH"></div></div></div>
-                            <div class="m-box"><div class="m-head">BACK</div><div class="m-row"><div class="m-label">W</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="WW"></div></div><div class="m-row"><div class="m-label">H</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="HH"></div></div></div>
-                            <div class="m-box"><div class="m-head">SLEEVE</div><div class="m-row"><div class="m-label">W</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="WW"></div></div><div class="m-row"><div class="m-label">H</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="HH"></div></div></div>
+                            <div class="m-box"><div class="m-head" title="FRONT">FRONT</div><div class="m-row"><div class="m-label">W</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="WW"></div></div><div class="m-row"><div class="m-label">H</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="HH"></div></div></div>
+                            <div class="m-box"><div class="m-head" title="BACK">BACK</div><div class="m-row"><div class="m-label">W</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="WW"></div></div><div class="m-row"><div class="m-label">H</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="HH"></div></div></div>
+                            <div class="m-box"><div class="m-head" title="SLEEVE">SLEEVE</div><div class="m-row"><div class="m-label">W</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="WW"></div></div><div class="m-row"><div class="m-label">H</div><div class="m-val-wrap"><input type="text" class="m-input" placeholder="HH"></div></div></div>
                         </div>
                     </div>
 
                     <div class="sign-box">
-                        <div><div class="s-head">DESIGNER</div><div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div></div>
-                        <div><div class="s-head">SALESPERSON</div><div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div></div>
-                        <div><div class="s-head">CUSTOMER</div><div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div></div>
+                        <div><div class="s-head" title="DESIGNER">DESIGNER</div><div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div></div>
+                        <div><div class="s-head" title="SALESPERSON">SALESPERSON</div><div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div></div>
+                        <div><div class="s-head" title="CUSTOMER">CUSTOMER</div><div class="s-val-wrap"><input type="text" class="s-val-input" placeholder="XXXXX"></div></div>
                     </div>
 
                     <div class="stamp-area">
@@ -371,7 +371,6 @@
         </div>
     </div>
 
-    <!-- Image Preview Modal -->
     <div id="previewModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closePreview()">&times;</span>
@@ -396,7 +395,6 @@
             const previewImage = document.getElementById('previewImage');
             const previewModal = document.getElementById('previewModal');
 
-            // local placeholders (CORS‑safe)
             function createPlaceholderImage(text, width, height) {
                 const canvas = document.createElement('canvas');
                 canvas.width = width; canvas.height = height;
@@ -426,7 +424,6 @@
             setupFileUpload(logoUpload, logoImg);
             setupFileUpload(imageUpload, mockupImg);
 
-            // date
             function formatDateToDisplay(d) { if(!d) return ''; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
             function setTodayDate() {
                 const actual = document.getElementById('actualDate');
@@ -449,7 +446,6 @@
                 });
             }
 
-            // totals
             const qtyInputs = document.querySelectorAll('.qty');
             qtyInputs.forEach(i => i.addEventListener('input', calc));
             function calc() {
@@ -461,7 +457,6 @@
                 document.getElementById('tot-grand').innerText = (a+k)>0 ? a+k : '';
             }
 
-            // reset
             window.resetForm = function() {
                 if(!confirm('Clear all fields?')) return;
                 document.getElementById('jobSheetForm').reset();
@@ -472,7 +467,6 @@
                 calc();
             };
 
-            // image export logic
             let currentPreviewDataURL = '';
 
             function syncInputAttributes() {
