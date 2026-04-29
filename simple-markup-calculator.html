@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Markup Calculator – KidzStudios</title>
+    <title>Simple Markup & Basic Calculator – KidzStudios</title>
     <meta name="theme-color" content="#F2F2F7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -38,7 +38,7 @@
             min-height: 100vh;
         }
 
-        /* ---- Header (identical to portal) ---- */
+        /* ---- Header ---- */
         .plain-header {
             background: var(--bg-container);
             height: 64px;
@@ -68,9 +68,7 @@
             transition: opacity var(--transition);
         }
 
-        .back-link:hover {
-            opacity: 0.7;
-        }
+        .back-link:hover { opacity: 0.7; }
 
         .back-link svg {
             width: 20px;
@@ -91,23 +89,32 @@
         .main-content {
             flex: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 40px 24px;
+        }
+
+        .calculator-container {
+            display: flex;
+            gap: 24px;
+            width: 100%;
+            max-width: 1050px;
+            align-items: flex-start;
+            justify-content: center;
         }
 
         .calculator-card {
             background: var(--bg-container);
             border-radius: var(--radius-lg);
             padding: 36px 32px 32px;
-            width: 100%;
-            max-width: 460px;
             box-shadow: var(--shadow-md);
             border: 1px solid var(--border-main);
+            flex: 1;
+            min-width: 300px;
             transition: box-shadow var(--transition);
         }
 
+        /* ---- Markup Calculator Specific ---- */
         .card-header {
             text-align: center;
             margin-bottom: 28px;
@@ -143,10 +150,7 @@
             margin: 0 0 24px;
         }
 
-        /* Input groups */
-        .input-group {
-            margin-bottom: 18px;
-        }
+        .input-group { margin-bottom: 18px; }
 
         .input-group label {
             display: flex;
@@ -156,7 +160,6 @@
             font-weight: 600;
             color: var(--text-secondary);
             margin-bottom: 7px;
-            letter-spacing: -0.1px;
         }
 
         .optional-badge {
@@ -183,15 +186,8 @@
             user-select: none;
         }
 
-        .currency-symbol {
-            left: 14px;
-            font-size: 0.95rem;
-        }
-
-        .percent-symbol {
-            right: 14px;
-            font-size: 0.95rem;
-        }
+        .currency-symbol { left: 14px; font-size: 0.95rem; }
+        .percent-symbol { right: 14px; font-size: 0.95rem; }
 
         .input-wrapper input {
             width: 100%;
@@ -223,7 +219,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* Results */
         .results-section {
             background: #F2F8FF;
             border: 1px solid #D1E4FF;
@@ -235,10 +230,7 @@
             gap: 12px;
         }
 
-        .result-item {
-            text-align: center;
-            padding: 6px 4px;
-        }
+        .result-item { text-align: center; padding: 6px 4px; }
 
         .result-item .result-label {
             font-size: 0.7rem;
@@ -290,7 +282,6 @@
         .profit-detail.negative .dot { background: #C53030; }
         .profit-detail.neutral .dot  { background: #A0AEC0; }
 
-        /* Buttons */
         .button-row {
             display: flex;
             gap: 10px;
@@ -318,7 +309,80 @@
         }
         .btn-copy:hover { background: #0077ED; }
 
-        /* ---- Footer (identical to portal) ---- */
+        /* ---- Basic Calculator Card ---- */
+        .basic-calc-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .basic-calc-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .calculator-display {
+            background: #F9F9FB;
+            border: 2px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-break: break-all;
+            transition: border-color var(--transition);
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .calc-btn {
+            aspect-ratio: 1 / 1;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #F2F2F7;
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .calc-btn:hover { background: #E5E5EA; }
+        .calc-btn:active { transform: scale(0.96); background: #D9D9DF; }
+
+        .calc-btn.operator { background: #FF9F0A; color: #FFF; }
+        .calc-btn.operator:hover { background: #E58C00; }
+        .calc-btn.operator:active { background: #CC7A00; }
+
+        .calc-btn.equals { background: var(--accent-color); color: #FFF; font-weight: 700; }
+        .calc-btn.equals:hover { background: #0077ED; }
+        .calc-btn.equals:active { background: #0062CC; }
+
+        .calc-btn.clear { background: #FF3B30; color: #FFF; }
+        .calc-btn.clear:hover { background: #E0352B; }
+        .calc-btn.clear:active { background: #C02E25; }
+
+        .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; height: auto; padding: 16px; }
+
+        /* ---- Footer ---- */
         .plain-footer {
             background: var(--bg-container);
             height: 48px;
@@ -355,90 +419,138 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        @media (max-width: 800px) {
+            .calculator-container { flex-direction: column; align-items: center; max-width: 500px; }
+            .calculator-card { width: 100%; min-width: unset; }
+        }
+
         @media (max-width: 480px) {
             .calculator-card { padding: 28px 20px 24px; }
             .card-header h1 { font-size: 1.4rem; }
+            .calculator-display { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header with back button -->
     <header class="plain-header">
-        <a href="index.html" class="back-link" aria-label="Back to Home">
+        <a href="index.html" class="back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
             <span>Home</span>
         </a>
         <div class="header-title">KIDZSTUDIOS</div>
-        <!-- Spacer to keep title centered -->
         <div style="width: 80px;"></div>
     </header>
 
     <main class="main-content">
-        <div class="calculator-card">
-            <div class="card-header">
-                <div class="icon-wrapper">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <circle cx="9.5" cy="9.5" r="0.5" fill="currentColor"></circle>
-                        <circle cx="14.5" cy="14.5" r="0.5" fill="currentColor"></circle>
+        <div class="calculator-container">
+
+            <!-- LEFT: Simple Markup Calculator -->
+            <div class="calculator-card">
+                <div class="card-header">
+                    <div class="icon-wrapper">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <circle cx="9.5" cy="9.5" r="0.5" fill="currentColor"></circle>
+                            <circle cx="14.5" cy="14.5" r="0.5" fill="currentColor"></circle>
+                        </svg>
+                    </div>
+                    <h1>Simple Markup Calculator</h1>
+                    <p class="subtitle">Cost → Selling Price & Margin</p>
+                </div>
+                <hr class="divider">
+
+                <div class="input-group">
+                    <label for="costPrice">Cost Price (RM)</label>
+                    <div class="input-wrapper">
+                        <span class="currency-symbol">RM</span>
+                        <input type="number" id="costPrice" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="markupPercent">Markup (%)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="markupPercent" class="percent-input" placeholder="0" min="0" step="0.01">
+                        <span class="percent-symbol">%</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="deliveryCost">Delivery <span class="optional-badge">optional</span></label>
+                    <div class="input-wrapper">
+                        <span class="currency-symbol">RM</span>
+                        <input type="number" id="deliveryCost" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="results-section">
+                    <div class="result-item highlight">
+                        <div class="result-label">Selling Price</div>
+                        <div class="result-value" id="sellingPriceDisplay">RM 0.00</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Profit</div>
+                        <div class="result-value" id="profitDisplay">RM 0.00</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Margin %</div>
+                        <div class="result-value" id="marginPercentDisplay">0.00%</div>
+                    </div>
+                </div>
+
+                <div class="profit-detail neutral" id="profitDetail">
+                    <span class="dot"></span>
+                    <span id="profitDetailText">Enter cost & markup to see results</span>
+                </div>
+
+                <div class="button-row">
+                    <button class="btn btn-reset" id="resetBtn">Reset</button>
+                    <button class="btn btn-copy" id="copyBtn">Copy Results</button>
+                </div>
+            </div>
+
+            <!-- RIGHT: Basic Calculator (hardcoded numpad) -->
+            <div class="calculator-card">
+                <div class="basic-calc-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                        <line x1="8" y1="6" x2="16" y2="6"></line>
+                        <line x1="8" y1="10" x2="16" y2="10"></line>
+                        <line x1="8" y1="14" x2="12" y2="14"></line>
                     </svg>
+                    <h2>Basic Calculator</h2>
                 </div>
-                <h1>Simple Markup Calculator</h1>
-                <p class="subtitle">Cost → Selling Price & Margin</p>
-            </div>
-            <hr class="divider">
 
-            <div class="input-group">
-                <label for="costPrice">Cost Price (RM)</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">RM</span>
-                    <input type="number" id="costPrice" class="currency-input" placeholder="0.00" min="0" step="0.01" autocomplete="off">
-                </div>
-            </div>
+                <div class="calculator-display" id="calcDisplay">0</div>
 
-            <div class="input-group">
-                <label for="markupPercent">Markup (%)</label>
-                <div class="input-wrapper">
-                    <input type="number" id="markupPercent" class="percent-input" placeholder="0" min="0" step="0.01" autocomplete="off">
-                    <span class="percent-symbol">%</span>
-                </div>
-            </div>
+                <div class="calc-grid" id="basicCalcGrid">
+                    <button class="calc-btn clear" id="btnClear">C</button>
+                    <button class="calc-btn operator" data-op="/">÷</button>
+                    <button class="calc-btn operator" data-op="*">×</button>
+                    <button class="calc-btn operator" data-op="-">−</button>
 
-            <div class="input-group">
-                <label for="deliveryCost">Delivery <span class="optional-badge">optional</span></label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">RM</span>
-                    <input type="number" id="deliveryCost" class="currency-input" placeholder="0.00" min="0" step="0.01" autocomplete="off">
-                </div>
-            </div>
+                    <button class="calc-btn digit" data-digit="7">7</button>
+                    <button class="calc-btn digit" data-digit="8">8</button>
+                    <button class="calc-btn digit" data-digit="9">9</button>
+                    <button class="calc-btn operator" data-op="+">+</button>
 
-            <div class="results-section" id="resultsSection">
-                <div class="result-item highlight">
-                    <div class="result-label">Selling Price</div>
-                    <div class="result-value" id="sellingPriceDisplay">RM 0.00</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">Profit</div>
-                    <div class="result-value" id="profitDisplay">RM 0.00</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">Margin %</div>
-                    <div class="result-value" id="marginPercentDisplay">0.00%</div>
-                </div>
-            </div>
+                    <button class="calc-btn digit" data-digit="4">4</button>
+                    <button class="calc-btn digit" data-digit="5">5</button>
+                    <button class="calc-btn digit" data-digit="6">6</button>
+                    <button class="calc-btn equals" id="btnEquals">=</button>
 
-            <div class="profit-detail neutral" id="profitDetail">
-                <span class="dot"></span>
-                <span id="profitDetailText">Enter cost & markup to see results</span>
-            </div>
+                    <button class="calc-btn digit" data-digit="1">1</button>
+                    <button class="calc-btn digit" data-digit="2">2</button>
+                    <button class="calc-btn digit" data-digit="3">3</button>
+                    <!-- placeholder row alignment -->
+                    <div></div> <!-- empty to keep grid shape, but we'll use a 4-col grid so this is fine -->
 
-            <div class="button-row">
-                <button class="btn btn-reset" id="resetBtn">Reset</button>
-                <button class="btn btn-copy" id="copyBtn">Copy Results</button>
+                    <button class="calc-btn digit zero" data-digit="0">0</button>
+                    <button class="calc-btn digit" data-digit=".">.</button>
+                    <!-- no more buttons, grid auto-fills -->
+                </div>
             </div>
         </div>
     </main>
@@ -450,6 +562,133 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // ---- BASIC CALCULATOR LOGIC ----
+        (function() {
+            const display = document.getElementById('calcDisplay');
+            const digitButtons = document.querySelectorAll('#basicCalcGrid .digit');
+            const operatorButtons = document.querySelectorAll('#basicCalcGrid .operator');
+            const equalsButton = document.getElementById('btnEquals');
+            const clearButton = document.getElementById('btnClear');
+
+            let currentInput = '';
+            let previousInput = '';
+            let operator = null;
+            let resetDisplay = false;
+
+            function updateDisplay(value) {
+                display.textContent = value || '0';
+            }
+
+            function clearAll() {
+                currentInput = '';
+                previousInput = '';
+                operator = null;
+                resetDisplay = false;
+                updateDisplay('0');
+            }
+
+            function calculate() {
+                const prev = parseFloat(previousInput);
+                const curr = parseFloat(currentInput);
+                if (isNaN(prev) || isNaN(curr)) return isNaN(curr) ? prev : curr;
+                switch (operator) {
+                    case '+': return prev + curr;
+                    case '-': return prev - curr;
+                    case '*': return prev * curr;
+                    case '/': return curr !== 0 ? prev / curr : 'Error';
+                    default: return curr;
+                }
+            }
+
+            digitButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const digit = btn.getAttribute('data-digit');
+                    if (resetDisplay) {
+                        currentInput = '';
+                        resetDisplay = false;
+                    }
+                    if (digit === '.' && currentInput.includes('.')) return;
+                    currentInput += digit;
+                    updateDisplay(currentInput);
+                });
+            });
+
+            operatorButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const op = btn.getAttribute('data-op');
+                    if (currentInput === '' && previousInput !== '') {
+                        operator = op;
+                        return;
+                    }
+                    if (previousInput !== '' && operator && !resetDisplay && currentInput !== '') {
+                        const result = calculate();
+                        previousInput = result.toString();
+                        updateDisplay(previousInput);
+                    } else {
+                        previousInput = currentInput || previousInput;
+                    }
+                    operator = op;
+                    resetDisplay = true;
+                });
+            });
+
+            equalsButton.addEventListener('click', () => {
+                if (operator && previousInput !== '' && currentInput !== '') {
+                    const result = calculate();
+                    updateDisplay(result);
+                    previousInput = result.toString();
+                    currentInput = '';
+                    operator = null;
+                    resetDisplay = true;
+                }
+            });
+
+            clearButton.addEventListener('click', clearAll);
+
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                const key = e.key;
+                if (key >= '0' && key <= '9' || key === '.') {
+                    if (resetDisplay) { currentInput = ''; resetDisplay = false; }
+                    if (key === '.' && currentInput.includes('.')) return;
+                    currentInput += key;
+                    updateDisplay(currentInput);
+                } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                    e.preventDefault();
+                    const op = key;
+                    if (currentInput === '' && previousInput !== '') {
+                        operator = op;
+                        return;
+                    }
+                    if (previousInput !== '' && operator && !resetDisplay && currentInput !== '') {
+                        const result = calculate();
+                        previousInput = result.toString();
+                        updateDisplay(previousInput);
+                    } else {
+                        previousInput = currentInput || previousInput;
+                    }
+                    operator = op;
+                    resetDisplay = true;
+                } else if (key === 'Enter' || key === '=') {
+                    e.preventDefault();
+                    if (operator && previousInput !== '' && currentInput !== '') {
+                        const result = calculate();
+                        updateDisplay(result);
+                        previousInput = result.toString();
+                        currentInput = '';
+                        operator = null;
+                        resetDisplay = true;
+                    }
+                } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                    clearAll();
+                } else if (key === 'Backspace') {
+                    currentInput = currentInput.slice(0, -1);
+                    updateDisplay(currentInput || '0');
+                }
+            });
+        })();
+
+        // ---- MARKUP CALCULATOR LOGIC ----
         (function() {
             const costInput = document.getElementById('costPrice');
             const markupInput = document.getElementById('markupPercent');
