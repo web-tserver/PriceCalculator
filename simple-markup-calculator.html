@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Markup Calculator – KidzStudios</title>
+    <meta name="theme-color" content="#F2F2F7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        :root {
+            --bg-body: #F2F2F7;
+            --bg-container: #FFFFFF;
+            --text-primary: #1C1C1E;
+            --text-secondary: #8E8E93;
+            --accent-color: #0A84FF;
+            --border-main: #E5E5EA;
+            --card-hover-shadow: rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius-sm: 14px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-mono: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ---- Header (identical to portal) ---- */
+        .plain-header {
+            background: var(--bg-container);
+            height: 64px;
+            width: 100%;
+            border-bottom: 1px solid var(--border-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-size: 16px;
+            font-weight: 600;
+            transition: opacity var(--transition);
+        }
+
+        .back-link:hover {
+            opacity: 0.7;
+        }
+
+        .back-link svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        /* ---- Main Content ---- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .calculator-card {
+            background: var(--bg-container);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px 32px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-main);
+            transition: box-shadow var(--transition);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .card-header .icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: rgba(10, 132, 255, 0.1);
+            margin-bottom: 16px;
+            color: var(--accent-color);
+        }
+
+        .card-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .card-header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border-main);
+            margin: 0 0 24px;
+        }
+
+        /* Input groups */
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+            letter-spacing: -0.1px;
+        }
+
+        .optional-badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: #F2F2F7;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper .currency-symbol,
+        .input-wrapper .percent-symbol {
+            position: absolute;
+            font-weight: 600;
+            color: var(--text-secondary);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .currency-symbol {
+            left: 14px;
+            font-size: 0.95rem;
+        }
+
+        .percent-symbol {
+            right: 14px;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            color: var(--text-primary);
+            background: #F9F9FB;
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: all var(--transition);
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .input-wrapper input.currency-input { padding-left: 40px; }
+        .input-wrapper input.percent-input { padding-right: 38px; }
+
+        .input-wrapper input:focus {
+            border-color: var(--accent-color);
+            background: #FFF;
+            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15);
+        }
+
+        .input-wrapper input::placeholder {
+            color: #C7C7CC;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Results */
+        .results-section {
+            background: #F2F8FF;
+            border: 1px solid #D1E4FF;
+            border-radius: var(--radius-md);
+            padding: 20px 18px;
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .result-item {
+            text-align: center;
+            padding: 6px 4px;
+        }
+
+        .result-item .result-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .result-item .result-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: var(--text-primary);
+        }
+
+        .result-item.highlight .result-value {
+            color: var(--accent-color);
+            font-size: 1.25rem;
+        }
+
+        .profit-detail {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--transition);
+        }
+
+        .profit-detail.positive { background: #EDFFF5; border: 1px solid #C6F6D5; color: #2F855A; }
+        .profit-detail.negative { background: #FFF5F5; border: 1px solid #FED7D7; color: #C53030; }
+        .profit-detail.neutral  { background: #F7F7FA; border: 1px solid #E5E5EA; color: var(--text-secondary); }
+
+        .profit-detail .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .profit-detail.positive .dot { background: #2F855A; }
+        .profit-detail.negative .dot { background: #C53030; }
+        .profit-detail.neutral .dot  { background: #A0AEC0; }
+
+        /* Buttons */
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: #F2F2F7;
+            color: var(--text-primary);
+            transition: all var(--transition);
+        }
+
+        .btn-reset:hover { background: #E5E5EA; }
+        .btn-copy {
+            background: var(--accent-color);
+            color: #FFF;
+            box-shadow: 0 2px 8px rgba(10, 132, 255, 0.25);
+        }
+        .btn-copy:hover { background: #0077ED; }
+
+        /* ---- Footer (identical to portal) ---- */
+        .plain-footer {
+            background: var(--bg-container);
+            height: 48px;
+            width: 100%;
+            border-top: 1px solid var(--border-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1C1C1E;
+            color: #FFF;
+            padding: 10px 22px;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .calculator-card { padding: 28px 20px 24px; }
+            .card-header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with back button -->
+    <header class="plain-header">
+        <a href="index.html" class="back-link" aria-label="Back to Home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            <span>Home</span>
+        </a>
+        <div class="header-title">KIDZSTUDIOS</div>
+        <!-- Spacer to keep title centered -->
+        <div style="width: 80px;"></div>
+    </header>
+
+    <main class="main-content">
+        <div class="calculator-card">
+            <div class="card-header">
+                <div class="icon-wrapper">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <circle cx="9.5" cy="9.5" r="0.5" fill="currentColor"></circle>
+                        <circle cx="14.5" cy="14.5" r="0.5" fill="currentColor"></circle>
+                    </svg>
+                </div>
+                <h1>Simple Markup Calculator</h1>
+                <p class="subtitle">Cost → Selling Price & Margin</p>
+            </div>
+            <hr class="divider">
+
+            <div class="input-group">
+                <label for="costPrice">Cost Price (RM)</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">RM</span>
+                    <input type="number" id="costPrice" class="currency-input" placeholder="0.00" min="0" step="0.01" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="markupPercent">Markup (%)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="markupPercent" class="percent-input" placeholder="0" min="0" step="0.01" autocomplete="off">
+                    <span class="percent-symbol">%</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="deliveryCost">Delivery <span class="optional-badge">optional</span></label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">RM</span>
+                    <input type="number" id="deliveryCost" class="currency-input" placeholder="0.00" min="0" step="0.01" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="result-item highlight">
+                    <div class="result-label">Selling Price</div>
+                    <div class="result-value" id="sellingPriceDisplay">RM 0.00</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Profit</div>
+                    <div class="result-value" id="profitDisplay">RM 0.00</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Margin %</div>
+                    <div class="result-value" id="marginPercentDisplay">0.00%</div>
+                </div>
+            </div>
+
+            <div class="profit-detail neutral" id="profitDetail">
+                <span class="dot"></span>
+                <span id="profitDetailText">Enter cost & markup to see results</span>
+            </div>
+
+            <div class="button-row">
+                <button class="btn btn-reset" id="resetBtn">Reset</button>
+                <button class="btn btn-copy" id="copyBtn">Copy Results</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="plain-footer">
+        © 2026 KidzStudios. All Rights Reserved.
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            const costInput = document.getElementById('costPrice');
+            const markupInput = document.getElementById('markupPercent');
+            const deliveryInput = document.getElementById('deliveryCost');
+            const sellDisplay = document.getElementById('sellingPriceDisplay');
+            const profitDisplay = document.getElementById('profitDisplay');
+            const marginDisplay = document.getElementById('marginPercentDisplay');
+            const profitDetail = document.getElementById('profitDetail');
+            const profitDetailText = document.getElementById('profitDetailText');
+            const resetBtn = document.getElementById('resetBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const toast = document.getElementById('toast');
+
+            function formatCurrency(val) {
+                if (!isFinite(val)) return 'RM —';
+                const abs = Math.abs(val);
+                const sign = val < 0 ? '-' : '';
+                return sign + 'RM ' + abs.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            function formatPercent(val) {
+                return isFinite(val) ? val.toFixed(2) + '%' : '—';
+            }
+
+            function update() {
+                const cost = parseFloat(costInput.value) || 0;
+                const markup = parseFloat(markupInput.value) || 0;
+                const delivery = parseFloat(deliveryInput.value) || 0;
+                const markupAmount = cost * (markup / 100);
+                const sellingPrice = cost + markupAmount + delivery;
+                const profit = sellingPrice - cost - delivery;
+                const margin = sellingPrice > 0 ? (profit / sellingPrice) * 100 : 0;
+
+                sellDisplay.textContent = formatCurrency(sellingPrice);
+                profitDisplay.textContent = formatCurrency(profit);
+                marginDisplay.textContent = formatPercent(margin);
+
+                if (cost === 0 && markup === 0 && delivery === 0) {
+                    profitDetail.className = 'profit-detail neutral';
+                    profitDetailText.textContent = 'Enter values to see results';
+                } else if (profit > 0.005) {
+                    profitDetail.className = 'profit-detail positive';
+                    profitDetailText.textContent = 'Profitable — good margin on this sale';
+                } else if (profit < -0.005) {
+                    profitDetail.className = 'profit-detail negative';
+                    profitDetailText.textContent = 'Loss — selling price is below total cost';
+                } else {
+                    profitDetail.className = 'profit-detail neutral';
+                    profitDetailText.textContent = 'Break-even — no profit or loss';
+                }
+            }
+
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+
+            costInput.addEventListener('input', update);
+            markupInput.addEventListener('input', update);
+            deliveryInput.addEventListener('input', update);
+
+            resetBtn.addEventListener('click', () => {
+                costInput.value = '';
+                markupInput.value = '';
+                deliveryInput.value = '';
+                update();
+                costInput.focus();
+                showToast('Fields cleared');
+            });
+
+            copyBtn.addEventListener('click', () => {
+                const text = `Selling Price: ${sellDisplay.textContent}\nProfit: ${profitDisplay.textContent}\nMargin: ${marginDisplay.textContent}`;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => showToast('Results copied!'));
+                }
+            });
+
+            update();
+        })();
+    </script>
+</body>
+</html>
