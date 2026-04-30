@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Markup & Basic Calculator – KidzStudios</title>
+    <title>Markup & Basic Calculator – KidzStudios</title>
     <meta name="theme-color" content="#F2F2F7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -16,7 +16,6 @@
             --text-secondary: #8E8E93;
             --accent-color: #0A84FF;
             --border-main: #E5E5EA;
-            --card-hover-shadow: rgba(0, 0, 0, 0.08);
             --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
             --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius-sm: 14px;
@@ -38,7 +37,6 @@
             min-height: 100vh;
         }
 
-        /* ---- Header ---- */
         .plain-header {
             background: var(--bg-container);
             height: 64px;
@@ -49,7 +47,6 @@
             justify-content: space-between;
             padding: 0 24px;
             font-weight: 700;
-            color: var(--text-primary);
             font-size: 18px;
             letter-spacing: 0.5px;
             position: sticky;
@@ -65,18 +62,9 @@
             color: var(--accent-color);
             font-size: 16px;
             font-weight: 600;
-            transition: opacity var(--transition);
         }
-
         .back-link:hover { opacity: 0.7; }
-
-        .back-link svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2.5;
-            fill: none;
-        }
+        .back-link svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; }
 
         .header-title {
             position: absolute;
@@ -85,7 +73,6 @@
             pointer-events: none;
         }
 
-        /* ---- Main Content ---- */
         .main-content {
             flex: 1;
             display: flex;
@@ -111,15 +98,13 @@
             border: 1px solid var(--border-main);
             flex: 1;
             min-width: 300px;
-            transition: box-shadow var(--transition);
         }
 
-        /* ---- Markup Calculator Specific ---- */
+        /* ---- Markup / Margin Card ---- */
         .card-header {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
         }
-
         .card-header .icon-wrapper {
             display: inline-flex;
             align-items: center;
@@ -128,64 +113,46 @@
             height: 56px;
             border-radius: 18px;
             background: rgba(10, 132, 255, 0.1);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             color: var(--accent-color);
         }
+        .card-header h1 { font-size: 1.6rem; font-weight: 700; }
+        .card-header .subtitle { font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px; }
 
-        .card-header h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.4px;
+        .mode-toggle {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-
-        .card-header .subtitle {
-            font-size: 0.9rem;
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--border-main);
+            border-radius: var(--radius-sm);
+            background: #F2F2F7;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition);
             color: var(--text-secondary);
-            margin-top: 6px;
+        }
+        .mode-btn.active {
+            background: var(--accent-color);
+            color: #FFF;
+            border-color: var(--accent-color);
         }
 
-        .divider {
-            border: none;
-            border-top: 1px solid var(--border-main);
-            margin: 0 0 24px;
-        }
+        .markup-section, .margin-section { display: none; }
+        .markup-section.visible, .margin-section.visible { display: block; }
+
+        .divider { border: none; border-top: 1px solid var(--border-main); margin: 0 0 24px; }
 
         .input-group { margin-bottom: 18px; }
-
-        .input-group label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 7px;
-        }
-
-        .optional-badge {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            background: #F2F2F7;
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper .currency-symbol,
-        .input-wrapper .percent-symbol {
-            position: absolute;
-            font-weight: 600;
-            color: var(--text-secondary);
-            pointer-events: none;
-            user-select: none;
-        }
-
+        .input-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 7px; display: flex; align-items: center; gap: 6px; }
+        .optional-badge { font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); background: #F2F2F7; padding: 2px 8px; border-radius: 20px; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .currency-symbol, .percent-symbol { position: absolute; font-weight: 600; color: var(--text-secondary); pointer-events: none; user-select: none; }
         .currency-symbol { left: 14px; font-size: 0.95rem; }
         .percent-symbol { right: 14px; font-size: 0.95rem; }
 
@@ -204,20 +171,10 @@
             -moz-appearance: textfield;
             appearance: textfield;
         }
-
         .input-wrapper input.currency-input { padding-left: 40px; }
         .input-wrapper input.percent-input { padding-right: 38px; }
-
-        .input-wrapper input:focus {
-            border-color: var(--accent-color);
-            background: #FFF;
-            box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15);
-        }
-
-        .input-wrapper input::placeholder {
-            color: #C7C7CC;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+        .input-wrapper input:focus { border-color: var(--accent-color); background: #FFF; box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15); }
+        .input-wrapper input::placeholder { color: #C7C7CC; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
         .results-section {
             background: #F2F8FF;
@@ -229,29 +186,10 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
         }
-
         .result-item { text-align: center; padding: 6px 4px; }
-
-        .result-item .result-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .result-item .result-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            font-family: var(--font-mono);
-            color: var(--text-primary);
-        }
-
-        .result-item.highlight .result-value {
-            color: var(--accent-color);
-            font-size: 1.25rem;
-        }
+        .result-item .result-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 6px; }
+        .result-item .result-value { font-size: 1.1rem; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary); }
+        .result-item.highlight .result-value { color: var(--accent-color); font-size: 1.25rem; }
 
         .profit-detail {
             margin-top: 14px;
@@ -264,30 +202,16 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all var(--transition);
         }
-
         .profit-detail.positive { background: #EDFFF5; border: 1px solid #C6F6D5; color: #2F855A; }
         .profit-detail.negative { background: #FFF5F5; border: 1px solid #FED7D7; color: #C53030; }
-        .profit-detail.neutral  { background: #F7F7FA; border: 1px solid #E5E5EA; color: var(--text-secondary); }
-
-        .profit-detail .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
+        .profit-detail.neutral { background: #F7F7FA; border: 1px solid #E5E5EA; color: var(--text-secondary); }
+        .profit-detail .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
         .profit-detail.positive .dot { background: #2F855A; }
         .profit-detail.negative .dot { background: #C53030; }
-        .profit-detail.neutral .dot  { background: #A0AEC0; }
+        .profit-detail.neutral .dot { background: #A0AEC0; }
 
-        .button-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
+        .button-row { display: flex; gap: 10px; margin-top: 20px; }
         .btn {
             flex: 1;
             padding: 14px 16px;
@@ -296,33 +220,16 @@
             border: none;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            background: #F2F2F7;
-            color: var(--text-primary);
             transition: all var(--transition);
         }
-
+        .btn-reset { background: #F2F2F7; color: var(--text-primary); }
         .btn-reset:hover { background: #E5E5EA; }
-        .btn-copy {
-            background: var(--accent-color);
-            color: #FFF;
-            box-shadow: 0 2px 8px rgba(10, 132, 255, 0.25);
-        }
+        .btn-copy { background: var(--accent-color); color: #FFF; box-shadow: 0 2px 8px rgba(10, 132, 255, 0.25); }
         .btn-copy:hover { background: #0077ED; }
 
         /* ---- Basic Calculator Card ---- */
-        .basic-calc-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .basic-calc-header h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
+        .basic-calc-header { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; }
+        .basic-calc-header h2 { font-size: 1.3rem; font-weight: 700; }
 
         .calculator-display {
             background: #F9F9FB;
@@ -332,23 +239,20 @@
             margin-bottom: 20px;
             text-align: right;
             font-family: var(--font-mono);
-            font-size: 2rem;
-            font-weight: 500;
-            color: var(--text-primary);
-            min-height: 70px;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-end;
             justify-content: flex-end;
-            word-break: break-all;
-            transition: border-color var(--transition);
+            min-height: 80px;
         }
+        .expression-line { font-size: 1rem; color: var(--text-secondary); min-height: 1.2em; word-break: break-all; }
+        .result-number { font-size: 2rem; font-weight: 500; color: var(--text-primary); }
 
         .calc-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
         }
-
         .calc-btn {
             aspect-ratio: 1 / 1;
             border: none;
@@ -358,35 +262,24 @@
             cursor: pointer;
             background: #F2F2F7;
             color: var(--text-primary);
-            transition: all 0.15s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0;
+            transition: all 0.15s ease;
         }
-
         .calc-btn:hover { background: #E5E5EA; }
         .calc-btn:active { transform: scale(0.96); background: #D9D9DF; }
 
         .calc-btn.operator { background: #FF9F0A; color: #FFF; }
-        .calc-btn.operator:hover { background: #E58C00; }
-        .calc-btn.operator:active { background: #CC7A00; }
-
+        .calc-btn.operator.active { background: #FFD60A; color: #1C1C1E; }
         .calc-btn.equals { background: var(--accent-color); color: #FFF; font-weight: 700; }
-        .calc-btn.equals:hover { background: #0077ED; }
-        .calc-btn.equals:active { background: #0062CC; }
-
         .calc-btn.clear { background: #FF3B30; color: #FFF; }
-        .calc-btn.clear:hover { background: #E0352B; }
-        .calc-btn.clear:active { background: #C02E25; }
+        .calc-btn.backspace { background: #D1D1D6; color: #1C1C1E; font-size: 1.1rem; }
+        .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; padding: 16px; }
 
-        .calc-btn.zero { grid-column: span 2; aspect-ratio: auto; height: auto; padding: 16px; }
-
-        /* ---- Footer ---- */
         .plain-footer {
             background: var(--bg-container);
             height: 48px;
-            width: 100%;
             border-top: 1px solid var(--border-main);
             display: flex;
             align-items: center;
@@ -396,7 +289,6 @@
             margin-top: auto;
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -407,27 +299,20 @@
             padding: 10px 22px;
             border-radius: 24px;
             font-size: 0.85rem;
-            font-weight: 500;
             opacity: 0;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.35s;
             z-index: 100;
             pointer-events: none;
         }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
         @media (max-width: 800px) {
-            .calculator-container { flex-direction: column; align-items: center; max-width: 500px; }
-            .calculator-card { width: 100%; min-width: unset; }
+            .calculator-container { flex-direction: column; max-width: 500px; }
+            .calculator-card { width: 100%; }
         }
-
         @media (max-width: 480px) {
             .calculator-card { padding: 28px 20px 24px; }
-            .card-header h1 { font-size: 1.4rem; }
-            .calculator-display { font-size: 1.6rem; }
+            .result-number { font-size: 1.6rem; }
         }
     </style>
 </head>
@@ -435,9 +320,7 @@
 
     <header class="plain-header">
         <a href="index.html" class="back-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
             <span>Home</span>
         </a>
         <div class="header-title">KIDZSTUDIOS</div>
@@ -447,62 +330,87 @@
     <main class="main-content">
         <div class="calculator-container">
 
-            <!-- LEFT: Simple Markup Calculator -->
-            <div class="calculator-card">
+            <!-- LEFT: Markup / Reverse Margin Calculator -->
+            <div class="calculator-card" id="markupCard">
                 <div class="card-header">
                     <div class="icon-wrapper">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="15" y1="9" x2="9" y2="15"></line>
                             <circle cx="9.5" cy="9.5" r="0.5" fill="currentColor"></circle>
                             <circle cx="14.5" cy="14.5" r="0.5" fill="currentColor"></circle>
                         </svg>
                     </div>
-                    <h1>Simple Markup Calculator</h1>
-                    <p class="subtitle">Cost → Selling Price & Margin</p>
+                    <h1 id="calcTitle">Simple Markup Calculator</h1>
+                    <p class="subtitle" id="calcSubtitle">Cost → Selling Price & Margin</p>
                 </div>
-                <hr class="divider">
 
-                <div class="input-group">
-                    <label for="costPrice">Cost Price (RM)</label>
-                    <div class="input-wrapper">
-                        <span class="currency-symbol">RM</span>
-                        <input type="number" id="costPrice" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="btnMarkupMode">Markup</button>
+                    <button class="mode-btn" id="btnMarginMode">Reverse Margin</button>
+                </div>
+
+                <!-- Markup mode inputs -->
+                <div class="markup-section visible" id="markupSection">
+                    <div class="input-group">
+                        <label for="costPrice">Cost Price (RM)</label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">RM</span>
+                            <input type="number" id="costPrice" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="markupPercent">Markup (%)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="markupPercent" class="percent-input" placeholder="0" min="0" step="0.01">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="deliveryCost">Delivery <span class="optional-badge">optional</span></label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">RM</span>
+                            <input type="number" id="deliveryCost" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                        </div>
                     </div>
                 </div>
-                <div class="input-group">
-                    <label for="markupPercent">Markup (%)</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="markupPercent" class="percent-input" placeholder="0" min="0" step="0.01">
-                        <span class="percent-symbol">%</span>
+
+                <!-- Margin mode inputs -->
+                <div class="margin-section" id="marginSection">
+                    <div class="input-group">
+                        <label for="sellingPriceInput">Selling Price (RM)</label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">RM</span>
+                            <input type="number" id="sellingPriceInput" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                        </div>
                     </div>
-                </div>
-                <div class="input-group">
-                    <label for="deliveryCost">Delivery <span class="optional-badge">optional</span></label>
-                    <div class="input-wrapper">
-                        <span class="currency-symbol">RM</span>
-                        <input type="number" id="deliveryCost" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                    <div class="input-group">
+                        <label for="costPriceMargin">Cost Price (RM)</label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">RM</span>
+                            <input type="number" id="costPriceMargin" class="currency-input" placeholder="0.00" min="0" step="0.01">
+                        </div>
                     </div>
                 </div>
 
                 <div class="results-section">
                     <div class="result-item highlight">
-                        <div class="result-label">Selling Price</div>
-                        <div class="result-value" id="sellingPriceDisplay">RM 0.00</div>
+                        <div class="result-label" id="resultLabel1">Selling Price</div>
+                        <div class="result-value" id="resultValue1">RM 0.00</div>
                     </div>
                     <div class="result-item">
-                        <div class="result-label">Profit</div>
-                        <div class="result-value" id="profitDisplay">RM 0.00</div>
+                        <div class="result-label" id="resultLabel2">Profit</div>
+                        <div class="result-value" id="resultValue2">RM 0.00</div>
                     </div>
                     <div class="result-item">
-                        <div class="result-label">Margin %</div>
-                        <div class="result-value" id="marginPercentDisplay">0.00%</div>
+                        <div class="result-label" id="resultLabel3">Margin %</div>
+                        <div class="result-value" id="resultValue3">0.00%</div>
                     </div>
                 </div>
 
                 <div class="profit-detail neutral" id="profitDetail">
                     <span class="dot"></span>
-                    <span id="profitDetailText">Enter cost & markup to see results</span>
+                    <span id="profitDetailText">Enter values to see results</span>
                 </div>
 
                 <div class="button-row">
@@ -511,10 +419,10 @@
                 </div>
             </div>
 
-            <!-- RIGHT: Basic Calculator (hardcoded numpad) -->
+            <!-- RIGHT: Basic Calculator with % and Backspace -->
             <div class="calculator-card">
                 <div class="basic-calc-header">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2">
                         <rect x="4" y="2" width="16" height="20" rx="2"></rect>
                         <line x1="8" y1="6" x2="16" y2="6"></line>
                         <line x1="8" y1="10" x2="16" y2="10"></line>
@@ -523,33 +431,41 @@
                     <h2>Basic Calculator</h2>
                 </div>
 
-                <div class="calculator-display" id="calcDisplay">0</div>
+                <div class="calculator-display" id="calcDisplay">
+                    <div class="expression-line" id="expressionLine"></div>
+                    <div class="result-number" id="displayNumber">0</div>
+                </div>
 
                 <div class="calc-grid" id="basicCalcGrid">
+                    <!-- Row 1: C, ÷, ×, % -->
                     <button class="calc-btn clear" id="btnClear">C</button>
                     <button class="calc-btn operator" data-op="/">÷</button>
                     <button class="calc-btn operator" data-op="*">×</button>
-                    <button class="calc-btn operator" data-op="-">−</button>
+                    <button class="calc-btn operator" id="btnPercent" data-op="%">%</button>
 
+                    <!-- Row 2: 7,8,9, - -->
                     <button class="calc-btn digit" data-digit="7">7</button>
                     <button class="calc-btn digit" data-digit="8">8</button>
                     <button class="calc-btn digit" data-digit="9">9</button>
-                    <button class="calc-btn operator" data-op="+">+</button>
+                    <button class="calc-btn operator" data-op="-">−</button>
 
+                    <!-- Row 3: 4,5,6, + -->
                     <button class="calc-btn digit" data-digit="4">4</button>
                     <button class="calc-btn digit" data-digit="5">5</button>
                     <button class="calc-btn digit" data-digit="6">6</button>
-                    <button class="calc-btn equals" id="btnEquals">=</button>
+                    <button class="calc-btn operator" data-op="+">+</button>
 
+                    <!-- Row 4: 1,2,3, backspace -->
                     <button class="calc-btn digit" data-digit="1">1</button>
                     <button class="calc-btn digit" data-digit="2">2</button>
                     <button class="calc-btn digit" data-digit="3">3</button>
-                    <!-- placeholder row alignment -->
-                    <div></div> <!-- empty to keep grid shape, but we'll use a 4-col grid so this is fine -->
+                    <button class="calc-btn backspace" id="btnBackspace">⌫</button>
 
+                    <!-- Row 5: 0, ., =, empty -->
                     <button class="calc-btn digit zero" data-digit="0">0</button>
                     <button class="calc-btn digit" data-digit=".">.</button>
-                    <!-- no more buttons, grid auto-fills -->
+                    <button class="calc-btn equals" id="btnEquals">=</button>
+                    <div></div>
                 </div>
             </div>
         </div>
@@ -562,11 +478,14 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ---- BASIC CALCULATOR LOGIC ----
+        // ---- BASIC CALCULATOR (unchanged logic, adapted to new layout) ----
         (function() {
-            const display = document.getElementById('calcDisplay');
+            const expressionLine = document.getElementById('expressionLine');
+            const displayNumber = document.getElementById('displayNumber');
             const digitButtons = document.querySelectorAll('#basicCalcGrid .digit');
-            const operatorButtons = document.querySelectorAll('#basicCalcGrid .operator');
+            const operatorButtons = document.querySelectorAll('#basicCalcGrid .operator:not(#btnPercent)');
+            const percentButton = document.getElementById('btnPercent');
+            const backspaceButton = document.getElementById('btnBackspace');
             const equalsButton = document.getElementById('btnEquals');
             const clearButton = document.getElementById('btnClear');
 
@@ -574,171 +493,205 @@
             let previousInput = '';
             let operator = null;
             let resetDisplay = false;
+            let activeOperatorBtn = null;
+            let expression = '';
 
-            function updateDisplay(value) {
-                display.textContent = value || '0';
+            function updateDisplay(value) { displayNumber.textContent = value || '0'; }
+            function updateExpression(expr) { expressionLine.textContent = expr; }
+
+            function setActiveOperatorButton(op) {
+                operatorButtons.forEach(btn => btn.classList.remove('active'));
+                if (op) {
+                    const activeBtn = document.querySelector(`#basicCalcGrid .operator[data-op="${op}"]`);
+                    if (activeBtn) { activeBtn.classList.add('active'); activeOperatorBtn = activeBtn; }
+                } else activeOperatorBtn = null;
+            }
+
+            function getOperatorSymbol(op) {
+                switch(op) { case '+': return '+'; case '-': return '−'; case '*': return '×'; case '/': return '÷'; default: return ''; }
             }
 
             function clearAll() {
-                currentInput = '';
-                previousInput = '';
-                operator = null;
-                resetDisplay = false;
-                updateDisplay('0');
+                currentInput = ''; previousInput = ''; operator = null; resetDisplay = false; expression = '';
+                updateDisplay('0'); updateExpression(''); setActiveOperatorButton(null);
             }
 
             function calculate() {
-                const prev = parseFloat(previousInput);
-                const curr = parseFloat(currentInput);
+                const prev = parseFloat(previousInput), curr = parseFloat(currentInput);
                 if (isNaN(prev) || isNaN(curr)) return isNaN(curr) ? prev : curr;
-                switch (operator) {
-                    case '+': return prev + curr;
-                    case '-': return prev - curr;
-                    case '*': return prev * curr;
-                    case '/': return curr !== 0 ? prev / curr : 'Error';
-                    default: return curr;
-                }
+                switch (operator) { case '+': return prev + curr; case '-': return prev - curr; case '*': return prev * curr; case '/': return curr !== 0 ? prev / curr : 'Error'; default: return curr; }
             }
 
-            digitButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const digit = btn.getAttribute('data-digit');
-                    if (resetDisplay) {
-                        currentInput = '';
-                        resetDisplay = false;
-                    }
-                    if (digit === '.' && currentInput.includes('.')) return;
-                    currentInput += digit;
-                    updateDisplay(currentInput);
-                });
+            digitButtons.forEach(btn => btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const digit = btn.dataset.digit;
+                if (resetDisplay) { currentInput = ''; resetDisplay = false; expression = ''; }
+                if (digit === '.' && currentInput.includes('.')) return;
+                currentInput += digit;
+                updateDisplay(currentInput); updateExpression(expression); setActiveOperatorButton(null);
+            }));
+
+            operatorButtons.forEach(btn => btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const op = btn.dataset.op, symbol = getOperatorSymbol(op);
+                if (currentInput === '' && previousInput !== '' && operator) {
+                    operator = op; expression = previousInput + ' ' + symbol + ' '; updateExpression(expression); setActiveOperatorButton(op); resetDisplay = true; return;
+                }
+                if (previousInput !== '' && operator && !resetDisplay && currentInput !== '') {
+                    const result = calculate(); previousInput = result.toString(); updateDisplay(previousInput);
+                } else if (currentInput !== '') previousInput = currentInput;
+                operator = op; resetDisplay = true; expression = previousInput + ' ' + symbol + ' '; updateExpression(expression); setActiveOperatorButton(op);
+            }));
+
+            percentButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentInput === '') return;
+                const currentVal = parseFloat(currentInput);
+                if (operator && previousInput !== '') {
+                    const prevVal = parseFloat(previousInput);
+                    currentInput = ((prevVal * currentVal) / 100).toString();
+                } else {
+                    currentInput = (currentVal / 100).toString();
+                }
+                updateDisplay(currentInput);
+                expression += currentInput + '%'; updateExpression(expression);
             });
 
-            operatorButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const op = btn.getAttribute('data-op');
-                    if (currentInput === '' && previousInput !== '') {
-                        operator = op;
-                        return;
-                    }
-                    if (previousInput !== '' && operator && !resetDisplay && currentInput !== '') {
-                        const result = calculate();
-                        previousInput = result.toString();
-                        updateDisplay(previousInput);
-                    } else {
-                        previousInput = currentInput || previousInput;
-                    }
-                    operator = op;
-                    resetDisplay = true;
-                });
+            backspaceButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (resetDisplay) { clearAll(); return; }
+                currentInput = currentInput.slice(0, -1);
+                if (currentInput === '') currentInput = '0';
+                updateDisplay(currentInput);
             });
 
-            equalsButton.addEventListener('click', () => {
+            equalsButton.addEventListener('click', (e) => {
+                e.stopPropagation();
                 if (operator && previousInput !== '' && currentInput !== '') {
                     const result = calculate();
+                    updateExpression(previousInput + ' ' + getOperatorSymbol(operator) + ' ' + currentInput + ' =');
                     updateDisplay(result);
-                    previousInput = result.toString();
-                    currentInput = '';
-                    operator = null;
-                    resetDisplay = true;
+                    previousInput = result.toString(); currentInput = ''; operator = null; resetDisplay = true; setActiveOperatorButton(null);
                 }
             });
 
-            clearButton.addEventListener('click', clearAll);
-
-            // Keyboard support
-            document.addEventListener('keydown', (e) => {
-                const key = e.key;
-                if (key >= '0' && key <= '9' || key === '.') {
-                    if (resetDisplay) { currentInput = ''; resetDisplay = false; }
-                    if (key === '.' && currentInput.includes('.')) return;
-                    currentInput += key;
-                    updateDisplay(currentInput);
-                } else if (key === '+' || key === '-' || key === '*' || key === '/') {
-                    e.preventDefault();
-                    const op = key;
-                    if (currentInput === '' && previousInput !== '') {
-                        operator = op;
-                        return;
-                    }
-                    if (previousInput !== '' && operator && !resetDisplay && currentInput !== '') {
-                        const result = calculate();
-                        previousInput = result.toString();
-                        updateDisplay(previousInput);
-                    } else {
-                        previousInput = currentInput || previousInput;
-                    }
-                    operator = op;
-                    resetDisplay = true;
-                } else if (key === 'Enter' || key === '=') {
-                    e.preventDefault();
-                    if (operator && previousInput !== '' && currentInput !== '') {
-                        const result = calculate();
-                        updateDisplay(result);
-                        previousInput = result.toString();
-                        currentInput = '';
-                        operator = null;
-                        resetDisplay = true;
-                    }
-                } else if (key === 'Escape' || key === 'c' || key === 'C') {
-                    clearAll();
-                } else if (key === 'Backspace') {
-                    currentInput = currentInput.slice(0, -1);
-                    updateDisplay(currentInput || '0');
-                }
-            });
+            clearButton.addEventListener('click', (e) => { e.stopPropagation(); clearAll(); });
         })();
 
-        // ---- MARKUP CALCULATOR LOGIC ----
+        // ---- MARKUP / MARGIN TOGGLE AND CALCULATIONS ----
         (function() {
-            const costInput = document.getElementById('costPrice');
-            const markupInput = document.getElementById('markupPercent');
-            const deliveryInput = document.getElementById('deliveryCost');
-            const sellDisplay = document.getElementById('sellingPriceDisplay');
-            const profitDisplay = document.getElementById('profitDisplay');
-            const marginDisplay = document.getElementById('marginPercentDisplay');
+            const btnMarkup = document.getElementById('btnMarkupMode');
+            const btnMargin = document.getElementById('btnMarginMode');
+            const markupSection = document.getElementById('markupSection');
+            const marginSection = document.getElementById('marginSection');
+            const calcTitle = document.getElementById('calcTitle');
+            const calcSubtitle = document.getElementById('calcSubtitle');
+            const resultLabel1 = document.getElementById('resultLabel1');
+            const resultValue1 = document.getElementById('resultValue1');
+            const resultValue2 = document.getElementById('resultValue2');
+            const resultValue3 = document.getElementById('resultValue3');
             const profitDetail = document.getElementById('profitDetail');
             const profitDetailText = document.getElementById('profitDetailText');
+
+            const costPriceInput = document.getElementById('costPrice');
+            const markupPercentInput = document.getElementById('markupPercent');
+            const deliveryCostInput = document.getElementById('deliveryCost');
+            const sellingPriceInput = document.getElementById('sellingPriceInput');
+            const costPriceMarginInput = document.getElementById('costPriceMargin');
+
             const resetBtn = document.getElementById('resetBtn');
             const copyBtn = document.getElementById('copyBtn');
             const toast = document.getElementById('toast');
 
+            function setMode(mode) {
+                if (mode === 'markup') {
+                    btnMarkup.classList.add('active'); btnMargin.classList.remove('active');
+                    markupSection.classList.add('visible'); marginSection.classList.remove('visible');
+                    calcTitle.textContent = 'Simple Markup Calculator';
+                    calcSubtitle.textContent = 'Cost → Selling Price & Margin';
+                    resultLabel1.textContent = 'Selling Price';
+                } else {
+                    btnMargin.classList.add('active'); btnMarkup.classList.remove('active');
+                    marginSection.classList.add('visible'); markupSection.classList.remove('visible');
+                    calcTitle.textContent = 'Reverse Margin Calculator';
+                    calcSubtitle.textContent = 'Selling Price & Cost → Profit & Margin';
+                    resultLabel1.textContent = 'Profit';
+                }
+                updateResults();
+            }
+
             function formatCurrency(val) {
                 if (!isFinite(val)) return 'RM —';
                 const abs = Math.abs(val);
-                const sign = val < 0 ? '-' : '';
-                return sign + 'RM ' + abs.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                return (val < 0 ? '-' : '') + 'RM ' + abs.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
+            function formatPercent(val) { return isFinite(val) ? val.toFixed(2) + '%' : '—'; }
 
-            function formatPercent(val) {
-                return isFinite(val) ? val.toFixed(2) + '%' : '—';
-            }
-
-            function update() {
-                const cost = parseFloat(costInput.value) || 0;
-                const markup = parseFloat(markupInput.value) || 0;
-                const delivery = parseFloat(deliveryInput.value) || 0;
-                const markupAmount = cost * (markup / 100);
-                const sellingPrice = cost + markupAmount + delivery;
-                const profit = sellingPrice - cost - delivery;
-                const margin = sellingPrice > 0 ? (profit / sellingPrice) * 100 : 0;
-
-                sellDisplay.textContent = formatCurrency(sellingPrice);
-                profitDisplay.textContent = formatCurrency(profit);
-                marginDisplay.textContent = formatPercent(margin);
-
-                if (cost === 0 && markup === 0 && delivery === 0) {
-                    profitDetail.className = 'profit-detail neutral';
-                    profitDetailText.textContent = 'Enter values to see results';
-                } else if (profit > 0.005) {
-                    profitDetail.className = 'profit-detail positive';
-                    profitDetailText.textContent = 'Profitable — good margin on this sale';
-                } else if (profit < -0.005) {
-                    profitDetail.className = 'profit-detail negative';
-                    profitDetailText.textContent = 'Loss — selling price is below total cost';
+            function updateResults() {
+                const isMarkup = btnMarkup.classList.contains('active');
+                if (isMarkup) {
+                    const cost = parseFloat(costPriceInput.value) || 0;
+                    const markup = parseFloat(markupPercentInput.value) || 0;
+                    const delivery = parseFloat(deliveryCostInput.value) || 0;
+                    const markupAmount = cost * (markup / 100);
+                    const sellingPrice = cost + markupAmount + delivery;
+                    const profit = sellingPrice - cost - delivery;
+                    const margin = sellingPrice > 0 ? (profit / sellingPrice) * 100 : 0;
+                    resultValue1.textContent = formatCurrency(sellingPrice);
+                    resultValue2.textContent = formatCurrency(profit);
+                    resultValue3.textContent = formatPercent(margin);
+                    if (cost === 0 && markup === 0 && delivery === 0) {
+                        profitDetail.className = 'profit-detail neutral';
+                        profitDetailText.textContent = 'Enter values to see results';
+                    } else if (profit > 0.005) {
+                        profitDetail.className = 'profit-detail positive';
+                        profitDetailText.textContent = 'Profitable — good margin on this sale';
+                    } else if (profit < -0.005) {
+                        profitDetail.className = 'profit-detail negative';
+                        profitDetailText.textContent = 'Loss — selling price is below total cost';
+                    } else {
+                        profitDetail.className = 'profit-detail neutral';
+                        profitDetailText.textContent = 'Break-even — no profit or loss';
+                    }
                 } else {
-                    profitDetail.className = 'profit-detail neutral';
-                    profitDetailText.textContent = 'Break-even — no profit or loss';
+                    const selling = parseFloat(sellingPriceInput.value) || 0;
+                    const costM = parseFloat(costPriceMarginInput.value) || 0;
+                    const profit = selling - costM;
+                    const margin = selling > 0 ? (profit / selling) * 100 : 0;
+                    resultValue1.textContent = formatCurrency(profit);
+                    resultValue2.textContent = formatCurrency(profit); // Profit same
+                    resultValue3.textContent = formatPercent(margin);
+                    if (selling === 0 && costM === 0) {
+                        profitDetail.className = 'profit-detail neutral';
+                        profitDetailText.textContent = 'Enter selling price & cost to see margin';
+                    } else if (profit > 0.005) {
+                        profitDetail.className = 'profit-detail positive';
+                        profitDetailText.textContent = 'Positive margin — good profit';
+                    } else if (profit < -0.005) {
+                        profitDetail.className = 'profit-detail negative';
+                        profitDetailText.textContent = 'Negative margin — you are selling at a loss';
+                    } else {
+                        profitDetail.className = 'profit-detail neutral';
+                        profitDetailText.textContent = 'Break-even — no profit or loss';
+                    }
                 }
+            }
+
+            function resetFields() {
+                costPriceInput.value = '';
+                markupPercentInput.value = '';
+                deliveryCostInput.value = '';
+                sellingPriceInput.value = '';
+                costPriceMarginInput.value = '';
+                updateResults();
+                showToast('Fields cleared');
+            }
+
+            function copyResults() {
+                const text = `${resultLabel1.textContent}: ${resultValue1.textContent}\nProfit: ${resultValue2.textContent}\nMargin %: ${resultValue3.textContent}`;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => showToast('Results copied!'));
+                } else showToast('Clipboard not available');
             }
 
             function showToast(msg) {
@@ -747,27 +700,14 @@
                 setTimeout(() => toast.classList.remove('show'), 2000);
             }
 
-            costInput.addEventListener('input', update);
-            markupInput.addEventListener('input', update);
-            deliveryInput.addEventListener('input', update);
+            btnMarkup.addEventListener('click', () => setMode('markup'));
+            btnMargin.addEventListener('click', () => setMode('margin'));
+            [costPriceInput, markupPercentInput, deliveryCostInput, sellingPriceInput, costPriceMarginInput].forEach(el => el.addEventListener('input', updateResults));
+            resetBtn.addEventListener('click', resetFields);
+            copyBtn.addEventListener('click', copyResults);
 
-            resetBtn.addEventListener('click', () => {
-                costInput.value = '';
-                markupInput.value = '';
-                deliveryInput.value = '';
-                update();
-                costInput.focus();
-                showToast('Fields cleared');
-            });
-
-            copyBtn.addEventListener('click', () => {
-                const text = `Selling Price: ${sellDisplay.textContent}\nProfit: ${profitDisplay.textContent}\nMargin: ${marginDisplay.textContent}`;
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(text).then(() => showToast('Results copied!'));
-                }
-            });
-
-            update();
+            // Initial
+            setMode('markup');
         })();
     </script>
 </body>
